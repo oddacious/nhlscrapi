@@ -20,6 +20,7 @@ class ReportLoader(object):
   
     __metaclass__ = ABCMeta
     __lx_doc = None
+    __json_doc = None
  
     def __init__(self, game_key, report_type=''):
         self.game_key = game_key
@@ -59,7 +60,10 @@ class ReportLoader(object):
             cn = NHLCn()
           
             if hasattr(cn, self.report_type):
-                html = getattr(cn, self.report_type)(self.game_key)
+                source_data = getattr(cn, self.report_type)(self.game_key)
+                html = source_data.html
+                if source_data.json:
+                    self.__json_doc = source_data.json
             else:
                 raise ValueError('Invalid report type: %s' % self.report_type)
           
@@ -70,6 +74,14 @@ class ReportLoader(object):
             
         return self.__lx_doc
     
+    def json_doc(self):
+        """
+        :returns: the processed json document
+        :rtype: ``json.load`` output
+        """
+        if self.__json_doc is None:
+            self.html_doc()
+        return self.__json_doc
     
     def parse_matchup(self):
         """

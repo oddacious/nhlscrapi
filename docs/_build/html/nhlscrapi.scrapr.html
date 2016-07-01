@@ -28,7 +28,7 @@
     <link rel="prev" title="nhlscrapi.games package" href="nhlscrapi.games.html" />
    
   
-  <meta name="viewport" content="width=device-width, initial-scale=0.9, maximum-scale=0.9">
+  <meta name="viewport" content="width=device-width, initial-scale=0.9, maximum-scale=0.9" />
 
   </head>
   <body role="document">  
@@ -49,8 +49,8 @@
 <dt id="nhlscrapi.scrapr.nhlreq.NHLCn">
 <em class="property">class </em><code class="descclassname">nhlscrapi.scrapr.nhlreq.</code><code class="descname">NHLCn</code><a class="reference internal" href="_modules/nhlscrapi/scrapr/nhlreq.html#NHLCn"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#nhlscrapi.scrapr.nhlreq.NHLCn" title="Permalink to this definition">¶</a></dt>
 <dd><p>Bases: <code class="xref py py-class docutils literal"><span class="pre">object</span></code></p>
-<p>Builds the URLs, makes the HTTP calls and retreives the raw HTML associated with various NHL report data. If
-an error occurs in the retrieval process, the error is recorded in <code class="docutils literal"><span class="pre">req_err</span></code>.</p>
+<p>Builds the URLs, makes the HTTP calls and retreives the raw HTML and/or JSON associated with various NHL 
+report data. If an error occurs in the retrieval process, the error is recorded in <code class="docutils literal"><span class="pre">req_err</span></code>.</p>
 <dl class="method">
 <dt id="nhlscrapi.scrapr.nhlreq.NHLCn.away_toi">
 <code class="descname">away_toi</code><span class="sig-paren">(</span><em>game_key</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/nhlscrapi/scrapr/nhlreq.html#NHLCn.away_toi"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#nhlscrapi.scrapr.nhlreq.NHLCn.away_toi" title="Permalink to this definition">¶</a></dt>
@@ -148,6 +148,12 @@ an error occurs in the retrieval process, the error is recorded in <code class="
 </dd></dl>
 
 <dl class="attribute">
+<dt id="nhlscrapi.scrapr.nhlreq.NHLCn.json_src">
+<code class="descname">json_src</code><em class="property"> = None</em><a class="headerlink" href="#nhlscrapi.scrapr.nhlreq.NHLCn.json_src" title="Permalink to this definition">¶</a></dt>
+<dd><p>The JSON source of the last NHL page requested.</p>
+</dd></dl>
+
+<dl class="attribute">
 <dt id="nhlscrapi.scrapr.nhlreq.NHLCn.req_err">
 <code class="descname">req_err</code><em class="property"> = None</em><a class="headerlink" href="#nhlscrapi.scrapr.nhlreq.NHLCn.req_err" title="Permalink to this definition">¶</a></dt>
 <dd><p>Error from the last HTTP request.</p>
@@ -241,18 +247,33 @@ an error occurs in the retrieval process, the error is recorded in <code class="
 </table>
 </dd></dl>
 
+<dl class="method">
+<dt id="nhlscrapi.scrapr.reportloader.ReportLoader.json_doc">
+<code class="descname">json_doc</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="_modules/nhlscrapi/scrapr/reportloader.html#ReportLoader.json_doc"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#nhlscrapi.scrapr.reportloader.ReportLoader.json_doc" title="Permalink to this definition">¶</a></dt>
+<dd><table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Returns:</th><td class="field-body">the processed json document</td>
+</tr>
+<tr class="field-even field"><th class="field-name">Return type:</th><td class="field-body"><code class="docutils literal"><span class="pre">json.load</span></code> output</td>
+</tr>
+</tbody>
+</table>
+</dd></dl>
+
 <dl class="attribute">
 <dt id="nhlscrapi.scrapr.reportloader.ReportLoader.matchup">
 <code class="descname">matchup</code><em class="property"> = None</em><a class="headerlink" href="#nhlscrapi.scrapr.reportloader.ReportLoader.matchup" title="Permalink to this definition">¶</a></dt>
 <dd><p>Fame meta information displayed in report banners including team names,
 final score, game date, location, and attendance. Data format is</p>
-<div class="code python highlight-python"><div class="highlight"><pre><span class="p">{</span>
-    <span class="s">&#39;home&#39;</span><span class="p">:</span> <span class="n">home</span><span class="p">,</span>
-    <span class="s">&#39;away&#39;</span><span class="p">:</span> <span class="n">away</span><span class="p">,</span>
-    <span class="s">&#39;final&#39;</span><span class="p">:</span> <span class="n">final</span><span class="p">,</span>
-    <span class="s">&#39;attendance&#39;</span><span class="p">:</span> <span class="n">att</span><span class="p">,</span>
-    <span class="s">&#39;date&#39;</span><span class="p">:</span> <span class="n">date</span><span class="p">,</span>
-    <span class="s">&#39;location&#39;</span><span class="p">:</span> <span class="n">loc</span>
+<div class="code python highlight-python"><div class="highlight"><pre><span></span><span class="p">{</span>
+    <span class="s1">&#39;home&#39;</span><span class="p">:</span> <span class="n">home</span><span class="p">,</span>
+    <span class="s1">&#39;away&#39;</span><span class="p">:</span> <span class="n">away</span><span class="p">,</span>
+    <span class="s1">&#39;final&#39;</span><span class="p">:</span> <span class="n">final</span><span class="p">,</span>
+    <span class="s1">&#39;attendance&#39;</span><span class="p">:</span> <span class="n">att</span><span class="p">,</span>
+    <span class="s1">&#39;date&#39;</span><span class="p">:</span> <span class="n">date</span><span class="p">,</span>
+    <span class="s1">&#39;location&#39;</span><span class="p">:</span> <span class="n">loc</span>
 <span class="p">}</span>
 </pre></div>
 </div>
@@ -305,7 +326,7 @@ final score, game date, location, and attendance. Data format is</p>
 <span id="nhlscrapi-scrapr-rtss-module"></span><h2>nhlscrapi.scrapr.rtss module<a class="headerlink" href="#module-nhlscrapi.scrapr.rtss" title="Permalink to this headline">¶</a></h2>
 <dl class="class">
 <dt id="nhlscrapi.scrapr.rtss.PlayParser">
-<em class="property">class </em><code class="descclassname">nhlscrapi.scrapr.rtss.</code><code class="descname">PlayParser</code><span class="sig-paren">(</span><em>season=2015</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/nhlscrapi/scrapr/rtss.html#PlayParser"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#nhlscrapi.scrapr.rtss.PlayParser" title="Permalink to this definition">¶</a></dt>
+<em class="property">class </em><code class="descclassname">nhlscrapi.scrapr.rtss.</code><code class="descname">PlayParser</code><span class="sig-paren">(</span><em>season=2016</em>, <em>game_type=None</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/nhlscrapi/scrapr/rtss.html#PlayParser"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#nhlscrapi.scrapr.rtss.PlayParser" title="Permalink to this definition">¶</a></dt>
 <dd><p>Bases: <code class="xref py py-class docutils literal"><span class="pre">object</span></code></p>
 <p>Interprets a single RTSS play by play table row, i.e. a single play. Constructs a dictionary of play features.</p>
 <dl class="staticmethod">
@@ -333,7 +354,7 @@ appropriate column number. The column locations pre/post 2008 are different.</p>
 <dd><p>Parses table row from RTSS. These are the rows tagged with <code class="docutils literal"><span class="pre">&lt;tr</span> <span class="pre">class='evenColor'</span> <span class="pre">...</span> <span class="pre">&gt;</span></code>. Result set
 contains <a class="reference internal" href="nhlscrapi.games.html#nhlscrapi.games.playbyplay.Strength" title="nhlscrapi.games.playbyplay.Strength"><code class="xref py py-class docutils literal"><span class="pre">nhlscrapi.games.playbyplay.Strength</span></code></a> and <a class="reference internal" href="nhlscrapi.games.html#nhlscrapi.games.events.EventType" title="nhlscrapi.games.events.EventType"><code class="xref py py-class docutils literal"><span class="pre">nhlscrapi.games.events.EventType</span></code></a>
 objects. Returned play data is in the form</p>
-<div class="code python highlight-python"><div class="highlight"><pre>{
+<div class="code python highlight-python"><div class="highlight"><pre><span></span>{
     &#39;play_num&#39;: num_of_play
     &#39;period&#39;: curr_period
     &#39;strength&#39;: strength_enum
@@ -365,6 +386,51 @@ objects. Returned play data is in the form</p>
 <em class="property">class </em><code class="descclassname">nhlscrapi.scrapr.rtss.</code><code class="descname">RTSS</code><span class="sig-paren">(</span><em>game_key</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/nhlscrapi/scrapr/rtss.html#RTSS"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#nhlscrapi.scrapr.rtss.RTSS" title="Permalink to this definition">¶</a></dt>
 <dd><p>Bases: <a class="reference internal" href="#nhlscrapi.scrapr.reportloader.ReportLoader" title="nhlscrapi.scrapr.reportloader.ReportLoader"><code class="xref py py-class docutils literal"><span class="pre">nhlscrapi.scrapr.reportloader.ReportLoader</span></code></a></p>
 <p>Retrieve and load RTSS play by play game data</p>
+<dl class="method">
+<dt id="nhlscrapi.scrapr.rtss.RTSS.calculate_game_seconds">
+<code class="descname">calculate_game_seconds</code><span class="sig-paren">(</span><em>p_obj</em>, <em>detailed</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/nhlscrapi/scrapr/rtss.html#RTSS.calculate_game_seconds"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#nhlscrapi.scrapr.rtss.RTSS.calculate_game_seconds" title="Permalink to this definition">¶</a></dt>
+<dd><p>Given the results from <a class="reference internal" href="#nhlscrapi.scrapr.rtss.PlayParser.build_play" title="nhlscrapi.scrapr.rtss.PlayParser.build_play"><code class="xref py py-func docutils literal"><span class="pre">nhlscrapi.scrapr.rtss.PlayParser.build_play()</span></code></a> and
+<a class="reference internal" href="#nhlscrapi.scrapr.rtss.RTSS.find_matching_row" title="nhlscrapi.scrapr.rtss.RTSS.find_matching_row"><code class="xref py py-func docutils literal"><span class="pre">nhlscrapi.scrapr.rtss.RTSS.find_matching_row()</span></code></a>,
+calculate the seconds in the game.</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><ul class="first simple">
+<li><strong>p_obj</strong> &#8211; play data from build_play()</li>
+<li><strong>detailed</strong> &#8211; additional information from JSON source</li>
+</ul>
+</td>
+</tr>
+<tr class="field-even field"><th class="field-name">Returns:</th><td class="field-body"><p class="first last">the updated object of play data</p>
+</td>
+</tr>
+</tbody>
+</table>
+</dd></dl>
+
+<dl class="method">
+<dt id="nhlscrapi.scrapr.rtss.RTSS.find_matching_row">
+<code class="descname">find_matching_row</code><span class="sig-paren">(</span><em>json_struct</em>, <em>p_obj</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/nhlscrapi/scrapr/rtss.html#RTSS.find_matching_row"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#nhlscrapi.scrapr.rtss.RTSS.find_matching_row" title="Permalink to this definition">¶</a></dt>
+<dd><p>Given a JSON structure and the result from <a class="reference internal" href="#nhlscrapi.scrapr.rtss.PlayParser.build_play" title="nhlscrapi.scrapr.rtss.PlayParser.build_play"><code class="xref py py-func docutils literal"><span class="pre">nhlscrapi.scrapr.rtss.PlayParser.build_play()</span></code></a>, find the row in the JSON
+structure that matches the play provided.</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><ul class="first simple">
+<li><strong>json_struct</strong> &#8211; JSON data from NHL.com&#8217;s JSON files</li>
+<li><strong>p_obj</strong> &#8211; play data from build_play()</li>
+</ul>
+</td>
+</tr>
+<tr class="field-even field"><th class="field-name">Returns:</th><td class="field-body"><p class="first last">the specific row on success, <code class="docutils literal"><span class="pre">None</span></code> otherwise</p>
+</td>
+</tr>
+</tbody>
+</table>
+</dd></dl>
+
 <dl class="method">
 <dt id="nhlscrapi.scrapr.rtss.RTSS.parse">
 <code class="descname">parse</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="_modules/nhlscrapi/scrapr/rtss.html#RTSS.parse"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#nhlscrapi.scrapr.rtss.RTSS.parse" title="Permalink to this definition">¶</a></dt>
@@ -539,7 +605,7 @@ Data: <code class="docutils literal"><span class="pre">{</span> <span class="pre
 <code class="descname">by_player</code><em class="property"> = None</em><a class="headerlink" href="#nhlscrapi.scrapr.toirep.TOIRepBase.by_player" title="Permalink to this definition">¶</a></dt>
 <dd><p>By player dictionary of shift summaries. The only events recorded per shift are <code class="xref py py-class docutils literal"><span class="pre">EventType.Goal</span></code>
 or <code class="xref py py-class docutils literal"><span class="pre">EventType.Penalty</span></code>. For <code class="docutils literal"><span class="pre">period</span> <span class="pre">=</span> <span class="pre">0</span></code>, the game totals are returned. Format is</p>
-<div class="code python highlight-python"><div class="highlight"><pre>{
+<div class="code python highlight-python"><div class="highlight"><pre><span></span>{
     player_num: {
         &#39;player_name&#39;: { &#39;first&#39;: &#39;&#39;, &#39;last&#39;: &#39;&#39; },
         &#39;shifts&#39;: [
@@ -609,7 +675,7 @@ or <code class="xref py py-class docutils literal"><span class="pre">EventType.P
 <dt id="nhlscrapi.scrapr.faceoffrep.FaceOffRep.face_offs">
 <code class="descname">face_offs</code><em class="property"> = None</em><a class="headerlink" href="#nhlscrapi.scrapr.faceoffrep.FaceOffRep.face_offs" title="Permalink to this definition">¶</a></dt>
 <dd><p>report in dictionary format</p>
-<div class="code python highlight-python"><div class="highlight"><pre>{
+<div class="code python highlight-python"><div class="highlight"><pre><span></span>{
     home/away: {
         player_nums: {
             &#39;name&#39;: name,
@@ -692,7 +758,7 @@ or <code class="xref py py-class docutils literal"><span class="pre">EventType.P
 </tr>
 </tbody>
 </table>
-<div class="code python highlight-python"><div class="highlight"><pre>{
+<div class="code python highlight-python"><div class="highlight"><pre><span></span>{
     &#39;home/away&#39;: {
         &#39;num&#39;: {
             &#39;pos&#39;: pos,
@@ -721,7 +787,7 @@ or <code class="xref py py-class docutils literal"><span class="pre">EventType.P
 </tr>
 </tbody>
 </table>
-<div class="code python highlight-python"><div class="highlight"><pre>{
+<div class="code python highlight-python"><div class="highlight"><pre><span></span>{
     &#39;home/away&#39;: {
         &#39;ev/pp/sh/tot&#39;: { &#39;won&#39;: goals, &#39;total&#39;: shots } },
     }
@@ -840,10 +906,10 @@ or <code class="xref py py-class docutils literal"><span class="pre">EventType.P
 </tr>
 </tbody>
 </table>
-<div class="code python highlight-python"><div class="highlight"><pre><span class="p">{</span>
-    <span class="s">&#39;home/away&#39;</span><span class="p">:</span> <span class="p">{</span>
-        <span class="s">&#39;agg&#39;</span><span class="p">:</span> <span class="p">{</span> <span class="s">&#39;ev/pp/sh/tot&#39;</span><span class="p">:</span> <span class="p">{</span> <span class="s">&#39;g&#39;</span><span class="p">:</span> <span class="n">goals</span><span class="p">,</span> <span class="s">&#39;s&#39;</span><span class="p">:</span> <span class="n">shots</span> <span class="p">}</span> <span class="p">},</span>
-        <span class="s">&#39;det&#39;</span><span class="p">:</span> <span class="p">{</span> <span class="s">&#39;5v5/5v4/5v3/et c&#39;</span><span class="p">:</span> <span class="p">{</span> <span class="s">&#39;g&#39;</span><span class="p">:</span> <span class="n">goals</span><span class="p">,</span> <span class="s">&#39;s&#39;</span><span class="p">:</span> <span class="n">shots</span> <span class="p">}</span> <span class="p">}</span>
+<div class="code python highlight-python"><div class="highlight"><pre><span></span><span class="p">{</span>
+    <span class="s1">&#39;home/away&#39;</span><span class="p">:</span> <span class="p">{</span>
+        <span class="s1">&#39;agg&#39;</span><span class="p">:</span> <span class="p">{</span> <span class="s1">&#39;ev/pp/sh/tot&#39;</span><span class="p">:</span> <span class="p">{</span> <span class="s1">&#39;g&#39;</span><span class="p">:</span> <span class="n">goals</span><span class="p">,</span> <span class="s1">&#39;s&#39;</span><span class="p">:</span> <span class="n">shots</span> <span class="p">}</span> <span class="p">},</span>
+        <span class="s1">&#39;det&#39;</span><span class="p">:</span> <span class="p">{</span> <span class="s1">&#39;5v5/5v4/5v3/et c&#39;</span><span class="p">:</span> <span class="p">{</span> <span class="s1">&#39;g&#39;</span><span class="p">:</span> <span class="n">goals</span><span class="p">,</span> <span class="s1">&#39;s&#39;</span><span class="p">:</span> <span class="n">shots</span> <span class="p">}</span> <span class="p">}</span>
     <span class="p">}</span>
 <span class="p">}</span>
 </pre></div>
@@ -959,11 +1025,6 @@ or <code class="xref py py-class docutils literal"><span class="pre">EventType.P
 <dl class="function">
 <dt id="nhlscrapi.scrapr.descparser.parse_takeaway_08">
 <code class="descclassname">nhlscrapi.scrapr.descparser.</code><code class="descname">parse_takeaway_08</code><span class="sig-paren">(</span><em>event</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/nhlscrapi/scrapr/descparser.html#parse_takeaway_08"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#nhlscrapi.scrapr.descparser.parse_takeaway_08" title="Permalink to this definition">¶</a></dt>
-<dd></dd></dl>
-
-<dl class="function">
-<dt id="nhlscrapi.scrapr.descparser.rem_char">
-<code class="descclassname">nhlscrapi.scrapr.descparser.</code><code class="descname">rem_char</code><span class="sig-paren">(</span><em>s</em>, <em>c</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/nhlscrapi/scrapr/descparser.html#rem_char"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#nhlscrapi.scrapr.descparser.rem_char" title="Permalink to this definition">¶</a></dt>
 <dd></dd></dl>
 
 <dl class="function">
@@ -1084,8 +1145,8 @@ or <code class="xref py py-class docutils literal"><span class="pre">EventType.P
       &copy;2015, Author.
       
       |
-      Powered by <a href="http://sphinx-doc.org/">Sphinx 1.3.1</a>
-      &amp; <a href="https://github.com/bitprophet/alabaster">Alabaster 0.7.6</a>
+      Powered by <a href="http://sphinx-doc.org/">Sphinx 1.3.5</a>
+      &amp; <a href="https://github.com/bitprophet/alabaster">Alabaster 0.7.7</a>
       
       |
       <a href="_sources/nhlscrapi.scrapr.txt"

@@ -27,7 +27,7 @@
     <link rel="up" title="Module code" href="../../index.html" />
    
   
-  <meta name="viewport" content="width=device-width, initial-scale=0.9, maximum-scale=0.9">
+  <meta name="viewport" content="width=device-width, initial-scale=0.9, maximum-scale=0.9" />
 
   </head>
   <body role="document">  
@@ -38,306 +38,349 @@
           <div class="body" role="main">
             
   <h1>Source code for nhlscrapi.scrapr.descparser</h1><div class="highlight"><pre>
+<span></span>
 <span class="kn">from</span> <span class="nn">nhlscrapi.scrapr.teamnameparser</span> <span class="kn">import</span> <span class="n">team_abbr_parser</span>
     
     
-<span class="c"># default parser does nothing</span>
-<span class="k">def</span> <span class="nf">default_desc_parser</span><span class="p">(</span><span class="n">event</span><span class="p">):</span>
-<div class="viewcode-block" id="default_desc_parser"><a class="viewcode-back" href="../../../nhlscrapi.scrapr.html#nhlscrapi.scrapr.descparser.default_desc_parser">[docs]</a>    <span class="k">pass</span>
+<span class="c1"># default parser does nothing</span>
+<div class="viewcode-block" id="default_desc_parser"><a class="viewcode-back" href="../../../nhlscrapi.scrapr.html#nhlscrapi.scrapr.descparser.default_desc_parser">[docs]</a><span class="k">def</span> <span class="nf">default_desc_parser</span><span class="p">(</span><span class="n">event</span><span class="p">):</span>
+    <span class="k">pass</span></div>
 
-<span class="c">#############################</span>
-<span class="c">##</span>
-<span class="c">## helper funcs</span>
-<span class="c">##</span>
-<span class="c">#############################</span>
-<span class="k">def</span> <span class="nf">rem_char</span><span class="p">(</span><span class="n">s</span><span class="p">,</span> <span class="n">c</span><span class="p">):</span></div>
-<div class="viewcode-block" id="rem_char"><a class="viewcode-back" href="../../../nhlscrapi.scrapr.html#nhlscrapi.scrapr.descparser.rem_char">[docs]</a>    <span class="k">return</span> <span class="n">s</span><span class="o">.</span><span class="n">replace</span><span class="p">(</span><span class="n">c</span><span class="p">,</span> <span class="s">&#39;&#39;</span><span class="p">)</span>
+<span class="c1">#############################</span>
+<span class="c1">##</span>
+<span class="c1">## helper funcs</span>
+<span class="c1">##</span>
+<span class="c1">#############################</span>
+<span class="c1"># get int distance from &#39;num ft.&#39;</span>
+<div class="viewcode-block" id="get_ft"><a class="viewcode-back" href="../../../nhlscrapi.scrapr.html#nhlscrapi.scrapr.descparser.get_ft">[docs]</a><span class="k">def</span> <span class="nf">get_ft</span><span class="p">(</span><span class="n">s</span><span class="p">,</span> <span class="n">def_dist</span> <span class="o">=</span> <span class="o">-</span><span class="mi">1</span><span class="p">):</span>
+    <span class="n">sd</span> <span class="o">=</span> <span class="n">s</span><span class="o">.</span><span class="n">split</span><span class="p">(</span><span class="s2">&quot; &quot;</span><span class="p">)[</span><span class="mi">0</span><span class="p">]</span>
+  
+    <span class="k">return</span> <span class="nb">int</span><span class="p">(</span><span class="n">sd</span><span class="p">)</span> <span class="k">if</span> <span class="n">sd</span><span class="o">.</span><span class="n">isdigit</span><span class="p">()</span> <span class="k">else</span> <span class="n">def_dist</span></div>
   
   
-<span class="c"># get int distance from &#39;num ft.&#39;</span>
-<span class="k">def</span> <span class="nf">get_ft</span><span class="p">(</span><span class="n">s</span><span class="p">,</span> <span class="n">def_dist</span> <span class="o">=</span> <span class="o">-</span><span class="mi">1</span><span class="p">):</span></div>
-<div class="viewcode-block" id="get_ft"><a class="viewcode-back" href="../../../nhlscrapi.scrapr.html#nhlscrapi.scrapr.descparser.get_ft">[docs]</a>    <span class="n">sd</span> <span class="o">=</span> <span class="n">s</span><span class="o">.</span><span class="n">split</span><span class="p">(</span><span class="s">&quot; &quot;</span><span class="p">)[</span><span class="mi">0</span><span class="p">]</span>
+<span class="c1"># def team_num_name(s):</span>
+<span class="c1">#     tnn = s.split(&quot; &quot;)</span>
+<span class="c1">#     tnn[1] = tnn[1].replace(&#39;#&#39;,&#39;&#39;)</span>
+<span class="c1">#     tnn[1] = int(tnn[1]) if tnn[1].isdigit() else -1</span>
   
-    <span class="k">return</span> <span class="nb">int</span><span class="p">(</span><span class="n">sd</span><span class="p">)</span> <span class="k">if</span> <span class="n">sd</span><span class="o">.</span><span class="n">isdigit</span><span class="p">()</span> <span class="k">else</span> <span class="n">def_dist</span>
-  
-  
-<span class="k">def</span> <span class="nf">team_num_name</span><span class="p">(</span><span class="n">s</span><span class="p">):</span></div>
-<div class="viewcode-block" id="team_num_name"><a class="viewcode-back" href="../../../nhlscrapi.scrapr.html#nhlscrapi.scrapr.descparser.team_num_name">[docs]</a>    <span class="n">tnn</span> <span class="o">=</span> <span class="n">s</span><span class="o">.</span><span class="n">split</span><span class="p">(</span><span class="s">&quot; &quot;</span><span class="p">)</span>
-    <span class="n">tnn</span><span class="p">[</span><span class="mi">1</span><span class="p">]</span> <span class="o">=</span> <span class="n">rem_char</span><span class="p">(</span><span class="n">tnn</span><span class="p">[</span><span class="mi">1</span><span class="p">],</span> <span class="s">&quot;#&quot;</span><span class="p">)</span>
-    <span class="n">tnn</span><span class="p">[</span><span class="mi">1</span><span class="p">]</span> <span class="o">=</span> <span class="nb">int</span><span class="p">(</span><span class="n">tnn</span><span class="p">[</span><span class="mi">1</span><span class="p">])</span> <span class="k">if</span> <span class="n">tnn</span><span class="p">[</span><span class="mi">1</span><span class="p">]</span><span class="o">.</span><span class="n">isdigit</span><span class="p">()</span> <span class="k">else</span> <span class="o">-</span><span class="mi">1</span>
-  
-    <span class="k">return</span> <span class="p">{</span>
-        <span class="s">&quot;team&quot;</span><span class="p">:</span> <span class="n">team_abbr_parser</span><span class="p">(</span><span class="n">tnn</span><span class="p">[</span><span class="mi">0</span><span class="p">]),</span>
-        <span class="s">&quot;num&quot;</span><span class="p">:</span> <span class="n">tnn</span><span class="p">[</span><span class="mi">1</span><span class="p">],</span>
-        <span class="s">&quot;name&quot;</span><span class="p">:</span> <span class="nb">str</span><span class="p">(</span><span class="n">tnn</span><span class="p">[</span><span class="mi">2</span><span class="p">]</span> <span class="o">+</span> <span class="p">(</span><span class="n">tnn</span><span class="p">[</span><span class="mi">3</span><span class="p">]</span> <span class="k">if</span> <span class="nb">len</span><span class="p">(</span><span class="n">tnn</span><span class="p">)</span> <span class="o">&gt;</span> <span class="mi">3</span> <span class="k">else</span> <span class="s">&quot;&quot;</span><span class="p">))</span>  <span class="c"># two word names</span>
+<span class="c1">#     return {</span>
+<span class="c1">#         &quot;team&quot;: team_abbr_parser(tnn[0]),</span>
+<span class="c1">#         &quot;num&quot;: tnn[1],</span>
+<span class="c1">#         &quot;name&quot;: &#39; &#39;.join(tnn[2:])</span>
+<span class="c1">#     }</span>
+<span class="kn">import</span> <span class="nn">re</span>
+<span class="n">__num_name_re</span> <span class="o">=</span> <span class="n">re</span><span class="o">.</span><span class="n">compile</span><span class="p">(</span><span class="s1">&#39;([0-9]*)(.*)&#39;</span><span class="p">)</span>
+
+<div class="viewcode-block" id="team_num_name"><a class="viewcode-back" href="../../../nhlscrapi.scrapr.html#nhlscrapi.scrapr.descparser.team_num_name">[docs]</a><span class="k">def</span> <span class="nf">team_num_name</span><span class="p">(</span><span class="n">s</span><span class="p">):</span>
+    <span class="c1"># error report 600 and error report 672</span>
+    <span class="n">tnn</span> <span class="o">=</span> <span class="n">s</span><span class="o">.</span><span class="n">split</span><span class="p">(</span><span class="s2">&quot;#&quot;</span><span class="p">)</span>
+    <span class="n">team</span> <span class="o">=</span> <span class="n">team_abbr_parser</span><span class="p">(</span><span class="n">tnn</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span><span class="o">.</span><span class="n">strip</span><span class="p">())</span>
+    <span class="n">m</span> <span class="o">=</span> <span class="n">__num_name_re</span><span class="o">.</span><span class="n">search</span><span class="p">(</span><span class="n">tnn</span><span class="p">[</span><span class="mi">1</span><span class="p">])</span>
+    <span class="k">if</span> <span class="n">m</span><span class="p">:</span>
+        <span class="n">name</span> <span class="o">=</span> <span class="n">m</span><span class="o">.</span><span class="n">group</span><span class="p">(</span><span class="mi">2</span><span class="p">)</span><span class="o">.</span><span class="n">strip</span><span class="p">()</span>
+        <span class="n">num</span> <span class="o">=</span> <span class="nb">int</span><span class="p">(</span><span class="n">m</span><span class="o">.</span><span class="n">group</span><span class="p">(</span><span class="mi">1</span><span class="p">))</span> <span class="k">if</span> <span class="nb">len</span><span class="p">(</span><span class="n">m</span><span class="o">.</span><span class="n">group</span><span class="p">(</span><span class="mi">1</span><span class="p">))</span> <span class="o">&gt;</span> <span class="mi">0</span> <span class="k">else</span> <span class="o">-</span><span class="mi">1</span>
+    <span class="k">else</span><span class="p">:</span>
+        <span class="n">num</span> <span class="o">=</span> <span class="o">-</span><span class="mi">1</span>
+        <span class="n">name</span> <span class="o">=</span> <span class="s1">&#39;&#39;</span>
+    <span class="n">d</span> <span class="o">=</span> <span class="p">{</span>
+        <span class="s2">&quot;team&quot;</span><span class="p">:</span> <span class="n">team</span><span class="p">,</span>
+        <span class="s2">&quot;num&quot;</span><span class="p">:</span> <span class="n">num</span><span class="p">,</span>
+        <span class="s2">&quot;name&quot;</span><span class="p">:</span> <span class="n">name</span>
     <span class="p">}</span>
+    <span class="k">return</span> <span class="n">d</span></div>
 
 
-<span class="k">def</span> <span class="nf">split_and_strip</span><span class="p">(</span><span class="n">s</span><span class="p">,</span> <span class="n">by</span><span class="p">):</span></div>
-<div class="viewcode-block" id="split_and_strip"><a class="viewcode-back" href="../../../nhlscrapi.scrapr.html#nhlscrapi.scrapr.descparser.split_and_strip">[docs]</a>    <span class="k">return</span> <span class="p">[</span><span class="n">si</span><span class="o">.</span><span class="n">strip</span><span class="p">()</span> <span class="k">for</span> <span class="n">si</span> <span class="ow">in</span> <span class="n">s</span><span class="o">.</span><span class="n">split</span><span class="p">(</span><span class="n">by</span><span class="p">)]</span>
+<div class="viewcode-block" id="split_and_strip"><a class="viewcode-back" href="../../../nhlscrapi.scrapr.html#nhlscrapi.scrapr.descparser.split_and_strip">[docs]</a><span class="k">def</span> <span class="nf">split_and_strip</span><span class="p">(</span><span class="n">s</span><span class="p">,</span> <span class="n">by</span><span class="p">):</span>
+    <span class="k">return</span> <span class="p">[</span><span class="n">si</span><span class="o">.</span><span class="n">strip</span><span class="p">()</span> <span class="k">for</span> <span class="n">si</span> <span class="ow">in</span> <span class="n">s</span><span class="o">.</span><span class="n">split</span><span class="p">(</span><span class="n">by</span><span class="p">)]</span></div>
 
 
-<span class="k">def</span> <span class="nf">rem_penalty_shot_desc</span><span class="p">(</span><span class="n">s</span><span class="p">):</span></div>
-<div class="viewcode-block" id="rem_penalty_shot_desc"><a class="viewcode-back" href="../../../nhlscrapi.scrapr.html#nhlscrapi.scrapr.descparser.rem_penalty_shot_desc">[docs]</a>    <span class="k">return</span> <span class="p">[</span> <span class="n">si</span> <span class="k">for</span> <span class="n">si</span> <span class="ow">in</span> <span class="n">s</span> <span class="k">if</span> <span class="s">&#39;penalty&#39;</span> <span class="ow">not</span> <span class="ow">in</span> <span class="n">si</span><span class="o">.</span><span class="n">lower</span><span class="p">()</span> <span class="p">]</span>
+<div class="viewcode-block" id="rem_penalty_shot_desc"><a class="viewcode-back" href="../../../nhlscrapi.scrapr.html#nhlscrapi.scrapr.descparser.rem_penalty_shot_desc">[docs]</a><span class="k">def</span> <span class="nf">rem_penalty_shot_desc</span><span class="p">(</span><span class="n">s</span><span class="p">):</span>
+    <span class="k">return</span> <span class="p">[</span> <span class="n">si</span> <span class="k">for</span> <span class="n">si</span> <span class="ow">in</span> <span class="n">s</span> <span class="k">if</span> <span class="s1">&#39;penalty&#39;</span> <span class="ow">not</span> <span class="ow">in</span> <span class="n">si</span><span class="o">.</span><span class="n">lower</span><span class="p">()</span> <span class="p">]</span></div>
 
 
 
 
-<span class="c">#############################</span>
-<span class="c">##</span>
-<span class="c">## parse a shot - &#39;08 format</span>
-<span class="c">##</span>
-<span class="c">#############################</span>
-<span class="c"># NYR ONGOAL - #6 STRALMAN, Slap, Off. Zone, 65 ft.</span>
-<span class="c"># NYR ONGOAL - #62 HAGELIN, Penalty Shot, Backhand, Off. Zone, 10 ft.</span>
-<span class="c"># shot type might have - in it (wrap-around)</span>
-<span class="k">def</span> <span class="nf">parse_shot_desc_08</span><span class="p">(</span><span class="n">event</span><span class="p">):</span></div>
-<div class="viewcode-block" id="parse_shot_desc_08"><a class="viewcode-back" href="../../../nhlscrapi.scrapr.html#nhlscrapi.scrapr.descparser.parse_shot_desc_08">[docs]</a>    
-    <span class="c"># split to get s[0] team - shooter, s[1] shot type, s[2] zone, s[3] distance</span>
-    <span class="c"># s[1] could read Penalty Shot</span>
-    <span class="n">s</span> <span class="o">=</span> <span class="n">split_and_strip</span><span class="p">(</span><span class="n">event</span><span class="o">.</span><span class="n">desc</span><span class="p">,</span> <span class="s">&quot;,&quot;</span><span class="p">)</span>
+<span class="c1">#############################</span>
+<span class="c1">##</span>
+<span class="c1">## parse a shot - &#39;08 format</span>
+<span class="c1">##</span>
+<span class="c1">#############################</span>
+<span class="c1"># NYR ONGOAL - #6 STRALMAN, Slap, Off. Zone, 65 ft.</span>
+<span class="c1"># NYR ONGOAL - #62 HAGELIN, Penalty Shot, Backhand, Off. Zone, 10 ft.</span>
+<span class="c1"># shot type might have - in it (wrap-around)</span>
+<div class="viewcode-block" id="parse_shot_desc_08"><a class="viewcode-back" href="../../../nhlscrapi.scrapr.html#nhlscrapi.scrapr.descparser.parse_shot_desc_08">[docs]</a><span class="k">def</span> <span class="nf">parse_shot_desc_08</span><span class="p">(</span><span class="n">event</span><span class="p">):</span>
+    
+    <span class="c1"># split to get s[0] team - shooter, s[1] shot type, s[2] zone, s[3] distance</span>
+    <span class="c1"># s[1] could read Penalty Shot</span>
+    <span class="n">s</span> <span class="o">=</span> <span class="n">split_and_strip</span><span class="p">(</span><span class="n">event</span><span class="o">.</span><span class="n">desc</span><span class="p">,</span> <span class="s2">&quot;,&quot;</span><span class="p">)</span>
 
-    <span class="n">event</span><span class="o">.</span><span class="n">is_penalty_shot</span> <span class="o">=</span> <span class="s">&#39;penalty&#39;</span> <span class="ow">in</span> <span class="n">event</span><span class="o">.</span><span class="n">desc</span><span class="o">.</span><span class="n">lower</span><span class="p">()</span>
+    <span class="n">event</span><span class="o">.</span><span class="n">is_penalty_shot</span> <span class="o">=</span> <span class="s1">&#39;penalty&#39;</span> <span class="ow">in</span> <span class="n">event</span><span class="o">.</span><span class="n">desc</span><span class="o">.</span><span class="n">lower</span><span class="p">()</span>
     <span class="n">s</span> <span class="o">=</span> <span class="n">rem_penalty_shot_desc</span><span class="p">(</span><span class="n">s</span><span class="p">)</span>
   
-    <span class="c"># split to get team</span>
-    <span class="n">st</span> <span class="o">=</span> <span class="n">split_and_strip</span><span class="p">(</span><span class="n">s</span><span class="p">[</span><span class="mi">0</span><span class="p">],</span> <span class="s">&quot; - &quot;</span><span class="p">)</span>
-    <span class="n">st</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span> <span class="o">=</span> <span class="n">rem_char</span><span class="p">(</span><span class="n">st</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span><span class="o">.</span><span class="n">split</span><span class="p">(</span><span class="s">&quot; &quot;</span><span class="p">)[</span><span class="mi">0</span><span class="p">]</span><span class="o">.</span><span class="n">strip</span><span class="p">(),</span> <span class="s">&quot;.&quot;</span><span class="p">)</span>
+    <span class="c1"># split to get team</span>
+    <span class="n">st</span> <span class="o">=</span> <span class="n">split_and_strip</span><span class="p">(</span><span class="n">s</span><span class="p">[</span><span class="mi">0</span><span class="p">],</span> <span class="s2">&quot; - &quot;</span><span class="p">)</span>
+    <span class="n">st</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span> <span class="o">=</span> <span class="n">st</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span><span class="o">.</span><span class="n">split</span><span class="p">(</span><span class="s2">&quot; &quot;</span><span class="p">)[</span><span class="mi">0</span><span class="p">]</span><span class="o">.</span><span class="n">strip</span><span class="p">()</span><span class="o">.</span><span class="n">replace</span><span class="p">(</span><span class="s1">&#39;.&#39;</span><span class="p">,</span><span class="s1">&#39;&#39;</span><span class="p">)</span>
   
-    <span class="c"># s[0] in form (#)num name; split by space to get num</span>
-    <span class="n">event</span><span class="o">.</span><span class="n">shooter</span> <span class="o">=</span> <span class="n">team_num_name</span><span class="p">(</span><span class="s">&quot; &quot;</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="n">st</span><span class="p">))</span>
+    <span class="c1"># s[0] in form (#)num name; split by space to get num</span>
+    <span class="n">event</span><span class="o">.</span><span class="n">shooter</span> <span class="o">=</span> <span class="n">team_num_name</span><span class="p">(</span><span class="s2">&quot; &quot;</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="n">st</span><span class="p">))</span>
   
-    <span class="c"># s[1] &#39; shottype &#39;</span>
-    <span class="n">event</span><span class="o">.</span><span class="n">shot_type</span> <span class="o">=</span> <span class="n">s</span><span class="p">[</span><span class="mi">1</span><span class="p">]</span><span class="o">.</span><span class="n">strip</span><span class="p">()</span> <span class="k">if</span> <span class="nb">len</span><span class="p">(</span><span class="n">s</span><span class="p">)</span> <span class="o">&gt;</span> <span class="mi">1</span> <span class="k">else</span> <span class="s">&quot;&quot;</span>
+    <span class="c1"># s[1] &#39; shottype &#39;</span>
+    <span class="n">event</span><span class="o">.</span><span class="n">shot_type</span> <span class="o">=</span> <span class="n">s</span><span class="p">[</span><span class="mi">1</span><span class="p">]</span><span class="o">.</span><span class="n">strip</span><span class="p">()</span> <span class="k">if</span> <span class="nb">len</span><span class="p">(</span><span class="n">s</span><span class="p">)</span> <span class="o">&gt;</span> <span class="mi">1</span> <span class="k">else</span> <span class="s2">&quot;&quot;</span>
   
-    <span class="c"># s[2] has zone &#39; Off. Zone&#39; or &#39; Def. Zone&#39;</span>
-    <span class="n">event</span><span class="o">.</span><span class="n">zone</span> <span class="o">=</span> <span class="n">s</span><span class="p">[</span><span class="mi">2</span><span class="p">]</span><span class="o">.</span><span class="n">strip</span><span class="p">()</span> <span class="k">if</span> <span class="nb">len</span><span class="p">(</span><span class="n">s</span><span class="p">)</span> <span class="o">&gt;</span> <span class="mi">2</span> <span class="k">else</span> <span class="s">&quot;&quot;</span>
+    <span class="c1"># s[2] has zone &#39; Off. Zone&#39; or &#39; Def. Zone&#39;</span>
+    <span class="n">event</span><span class="o">.</span><span class="n">zone</span> <span class="o">=</span> <span class="n">s</span><span class="p">[</span><span class="mi">2</span><span class="p">]</span><span class="o">.</span><span class="n">strip</span><span class="p">()</span> <span class="k">if</span> <span class="nb">len</span><span class="p">(</span><span class="n">s</span><span class="p">)</span> <span class="o">&gt;</span> <span class="mi">2</span> <span class="k">else</span> <span class="s2">&quot;&quot;</span>
   
-    <span class="c"># s[3] distance &#39;num ft.&#39;</span>
-    <span class="n">event</span><span class="o">.</span><span class="n">dist</span> <span class="o">=</span> <span class="n">get_ft</span><span class="p">(</span><span class="n">s</span><span class="p">[</span><span class="mi">3</span><span class="p">])</span> <span class="k">if</span> <span class="nb">len</span><span class="p">(</span><span class="n">s</span><span class="p">)</span> <span class="o">&gt;</span> <span class="mi">3</span> <span class="k">else</span> <span class="o">-</span><span class="mi">1</span>
+    <span class="c1"># s[3] distance &#39;num ft.&#39;</span>
+    <span class="n">event</span><span class="o">.</span><span class="n">dist</span> <span class="o">=</span> <span class="n">get_ft</span><span class="p">(</span><span class="n">s</span><span class="p">[</span><span class="mi">3</span><span class="p">])</span> <span class="k">if</span> <span class="nb">len</span><span class="p">(</span><span class="n">s</span><span class="p">)</span> <span class="o">&gt;</span> <span class="mi">3</span> <span class="k">else</span> <span class="o">-</span><span class="mi">1</span></div>
   
   
-<span class="c">#############################</span>
-<span class="c">##</span>
-<span class="c">## parse a goal - &#39;08 format</span>
-<span class="c">##</span>
-<span class="c">#############################</span>
-<span class="c"># NYR #13 CARCILLO(4), Wrist, Off. Zone, 11 ft. Assists: #15 DORSETT(4); #22 BOYLE(12)</span>
-<span class="c"># NYR #21 STEPAN(10), Penalty Shot, Wrist, Off. Zone, 10 ft.</span>
-<span class="k">def</span> <span class="nf">parse_goal_desc_08</span><span class="p">(</span><span class="n">event</span><span class="p">):</span></div>
-<div class="viewcode-block" id="parse_goal_desc_08"><a class="viewcode-back" href="../../../nhlscrapi.scrapr.html#nhlscrapi.scrapr.descparser.parse_goal_desc_08">[docs]</a>  
-    <span class="n">event</span><span class="o">.</span><span class="n">is_penalty_shot</span> <span class="o">=</span> <span class="s">&#39;penalty&#39;</span> <span class="ow">in</span> <span class="n">event</span><span class="o">.</span><span class="n">desc</span><span class="o">.</span><span class="n">lower</span><span class="p">()</span>
+<span class="c1">#############################</span>
+<span class="c1">##</span>
+<span class="c1">## parse a goal - &#39;08 format</span>
+<span class="c1">##</span>
+<span class="c1">#############################</span>
+<span class="c1"># NYR #13 CARCILLO(4), Wrist, Off. Zone, 11 ft. Assists: #15 DORSETT(4); #22 BOYLE(12)</span>
+<span class="c1"># NYR #21 STEPAN(10), Penalty Shot, Wrist, Off. Zone, 10 ft.</span>
+<span class="c1"># MTL #25 DE LA ROSE(1), Deflected, Off. Zone, 13 ft. Assists: #8 PRUST(10); #76 SUBBAN(35)</span>
+<div class="viewcode-block" id="parse_goal_desc_08"><a class="viewcode-back" href="../../../nhlscrapi.scrapr.html#nhlscrapi.scrapr.descparser.parse_goal_desc_08">[docs]</a><span class="k">def</span> <span class="nf">parse_goal_desc_08</span><span class="p">(</span><span class="n">event</span><span class="p">):</span>
+  
+    <span class="n">event</span><span class="o">.</span><span class="n">is_penalty_shot</span> <span class="o">=</span> <span class="s1">&#39;penalty&#39;</span> <span class="ow">in</span> <span class="n">event</span><span class="o">.</span><span class="n">desc</span><span class="o">.</span><span class="n">lower</span><span class="p">()</span>
   
     <span class="k">if</span> <span class="ow">not</span> <span class="n">event</span><span class="o">.</span><span class="n">is_penalty_shot</span><span class="p">:</span>
-        <span class="n">s</span> <span class="o">=</span> <span class="n">event</span><span class="o">.</span><span class="n">desc</span><span class="o">.</span><span class="n">split</span><span class="p">(</span><span class="s">&quot;:&quot;</span><span class="p">)</span>
-        <span class="c"># assists dictionary = { number, [ name, season total ] }</span>
+        <span class="n">s</span> <span class="o">=</span> <span class="n">event</span><span class="o">.</span><span class="n">desc</span><span class="o">.</span><span class="n">split</span><span class="p">(</span><span class="s2">&quot;:&quot;</span><span class="p">)</span>
+        <span class="c1"># assists dictionary = { number, [ name, season total ] }</span>
         <span class="n">a_d</span> <span class="o">=</span> <span class="p">{</span> <span class="p">}</span>
         <span class="k">if</span> <span class="nb">len</span><span class="p">(</span><span class="n">s</span><span class="p">)</span> <span class="o">&gt;</span> <span class="mi">1</span><span class="p">:</span>
-            <span class="c"># assists by</span>
-            <span class="n">a</span> <span class="o">=</span> <span class="p">[</span><span class="n">si</span><span class="o">.</span><span class="n">strip</span><span class="p">()</span> <span class="k">for</span> <span class="n">si</span> <span class="ow">in</span> <span class="n">s</span><span class="p">[</span><span class="mi">1</span><span class="p">]</span><span class="o">.</span><span class="n">split</span><span class="p">(</span><span class="s">&quot;;&quot;</span><span class="p">)</span> <span class="k">if</span> <span class="n">si</span><span class="o">.</span><span class="n">strip</span><span class="p">()</span> <span class="o">!=</span> <span class="s">&quot;&quot;</span><span class="p">]</span>
+            <span class="c1"># assists by</span>
+            <span class="n">a</span> <span class="o">=</span> <span class="p">[</span><span class="n">si</span><span class="o">.</span><span class="n">strip</span><span class="p">()</span> <span class="k">for</span> <span class="n">si</span> <span class="ow">in</span> <span class="n">s</span><span class="p">[</span><span class="mi">1</span><span class="p">]</span><span class="o">.</span><span class="n">split</span><span class="p">(</span><span class="s2">&quot;;&quot;</span><span class="p">)</span> <span class="k">if</span> <span class="n">si</span><span class="o">.</span><span class="n">strip</span><span class="p">()</span> <span class="o">!=</span> <span class="s2">&quot;&quot;</span><span class="p">]</span>
             <span class="k">for</span> <span class="n">ai</span> <span class="ow">in</span> <span class="n">a</span><span class="p">:</span>
                 <span class="n">a_l</span> <span class="o">=</span> <span class="n">assist_from</span><span class="p">(</span><span class="n">ai</span><span class="p">)</span>
                 <span class="n">a_d</span><span class="p">[</span><span class="n">a_l</span><span class="p">[</span><span class="mi">0</span><span class="p">]]</span> <span class="o">=</span> <span class="n">a_l</span><span class="p">[</span><span class="mi">1</span><span class="p">:</span><span class="mi">3</span><span class="p">]</span>
       
         <span class="n">event</span><span class="o">.</span><span class="n">assists</span> <span class="o">=</span> <span class="n">a_d</span>
   
-        <span class="n">s</span> <span class="o">=</span> <span class="n">s</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span><span class="o">.</span><span class="n">split</span><span class="p">(</span><span class="s">&quot;,&quot;</span><span class="p">)</span>
-        <span class="n">s</span> <span class="o">=</span> <span class="p">[</span><span class="n">e</span><span class="o">.</span><span class="n">strip</span><span class="p">()</span> <span class="k">for</span> <span class="n">e</span> <span class="ow">in</span> <span class="n">s</span> <span class="k">if</span> <span class="n">e</span> <span class="ow">not</span> <span class="ow">in</span> <span class="p">[</span><span class="s">&quot;Assists&quot;</span><span class="p">,</span> <span class="s">&quot;Assist&quot;</span><span class="p">,</span> <span class="s">&quot;A&quot;</span><span class="p">]]</span>
+        <span class="n">s</span> <span class="o">=</span> <span class="n">s</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span><span class="o">.</span><span class="n">split</span><span class="p">(</span><span class="s2">&quot;,&quot;</span><span class="p">)</span>
+        <span class="n">s</span> <span class="o">=</span> <span class="p">[</span><span class="n">e</span><span class="o">.</span><span class="n">strip</span><span class="p">()</span> <span class="k">for</span> <span class="n">e</span> <span class="ow">in</span> <span class="n">s</span> <span class="k">if</span> <span class="n">e</span> <span class="ow">not</span> <span class="ow">in</span> <span class="p">[</span><span class="s2">&quot;Assists&quot;</span><span class="p">,</span> <span class="s2">&quot;Assist&quot;</span><span class="p">,</span> <span class="s2">&quot;A&quot;</span><span class="p">]]</span>
     <span class="k">else</span><span class="p">:</span>
-        <span class="n">s</span> <span class="o">=</span> <span class="n">event</span><span class="o">.</span><span class="n">desc</span><span class="o">.</span><span class="n">split</span><span class="p">(</span><span class="s">&#39;,&#39;</span><span class="p">)</span>
+        <span class="n">s</span> <span class="o">=</span> <span class="n">event</span><span class="o">.</span><span class="n">desc</span><span class="o">.</span><span class="n">split</span><span class="p">(</span><span class="s1">&#39;,&#39;</span><span class="p">)</span>
         <span class="n">s</span> <span class="o">=</span> <span class="n">rem_penalty_shot_desc</span><span class="p">(</span><span class="n">s</span><span class="p">)</span>
   
-    <span class="c"># base case</span>
+    <span class="c1"># base case</span>
     <span class="k">if</span> <span class="nb">len</span><span class="p">(</span><span class="n">s</span><span class="p">)</span> <span class="o">&gt;</span> <span class="mi">3</span><span class="p">:</span>
         <span class="n">event</span><span class="o">.</span><span class="n">shot_type</span> <span class="o">=</span> <span class="n">s</span><span class="p">[</span><span class="mi">1</span><span class="p">]</span>
         <span class="n">event</span><span class="o">.</span><span class="n">zone</span> <span class="o">=</span> <span class="n">s</span><span class="p">[</span><span class="mi">2</span><span class="p">]</span>
         <span class="n">event</span><span class="o">.</span><span class="n">dist</span> <span class="o">=</span> <span class="n">get_ft</span><span class="p">(</span><span class="n">s</span><span class="p">[</span><span class="mi">3</span><span class="p">])</span>
     <span class="k">else</span><span class="p">:</span>
-        <span class="c"># this is really ugly</span>
+        <span class="c1"># this is really ugly</span>
         <span class="k">try</span><span class="p">:</span>
             <span class="n">event</span><span class="o">.</span><span class="n">dist</span> <span class="o">=</span> <span class="n">get_ft</span><span class="p">(</span><span class="n">s</span><span class="p">[</span><span class="o">-</span><span class="mi">1</span><span class="p">])</span>
-            <span class="k">if</span> <span class="s">&#39;zone&#39;</span> <span class="ow">in</span> <span class="n">s</span><span class="p">[</span><span class="o">-</span><span class="mi">2</span><span class="p">]</span><span class="o">.</span><span class="n">lower</span><span class="p">():</span>
+            <span class="k">if</span> <span class="s1">&#39;zone&#39;</span> <span class="ow">in</span> <span class="n">s</span><span class="p">[</span><span class="o">-</span><span class="mi">2</span><span class="p">]</span><span class="o">.</span><span class="n">lower</span><span class="p">():</span>
                 <span class="n">event</span><span class="o">.</span><span class="n">zone</span> <span class="o">=</span> <span class="n">s</span><span class="p">[</span><span class="o">-</span><span class="mi">2</span><span class="p">]</span>
             <span class="k">else</span><span class="p">:</span>
                 <span class="n">event</span><span class="o">.</span><span class="n">shot_type</span> <span class="o">=</span> <span class="n">s</span><span class="p">[</span><span class="o">-</span><span class="mi">2</span><span class="p">]</span>
         <span class="k">except</span><span class="p">:</span>
-            <span class="k">if</span> <span class="s">&#39;zone&#39;</span> <span class="ow">in</span> <span class="n">s</span><span class="p">[</span><span class="o">-</span><span class="mi">1</span><span class="p">]</span><span class="o">.</span><span class="n">lower</span><span class="p">():</span>
+            <span class="k">if</span> <span class="s1">&#39;zone&#39;</span> <span class="ow">in</span> <span class="n">s</span><span class="p">[</span><span class="o">-</span><span class="mi">1</span><span class="p">]</span><span class="o">.</span><span class="n">lower</span><span class="p">():</span>
                 <span class="n">event</span><span class="o">.</span><span class="n">zone</span> <span class="o">=</span> <span class="n">s</span><span class="p">[</span><span class="o">-</span><span class="mi">2</span><span class="p">]</span>
         <span class="k">else</span><span class="p">:</span>
             <span class="n">event</span><span class="o">.</span><span class="n">shot_type</span> <span class="o">=</span> <span class="n">s</span><span class="p">[</span><span class="o">-</span><span class="mi">2</span><span class="p">]</span>
         
-    <span class="n">scorer</span> <span class="o">=</span> <span class="n">s</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span><span class="o">.</span><span class="n">split</span><span class="p">(</span><span class="s">&quot; &quot;</span><span class="p">)</span>
+    <span class="n">scorer</span> <span class="o">=</span> <span class="n">s</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span><span class="o">.</span><span class="n">split</span><span class="p">(</span><span class="s2">&quot; &quot;</span><span class="p">)</span>
   
-    <span class="c"># account for two word last names</span>
+    <span class="c1"># account for two word last names</span>
     <span class="k">if</span> <span class="nb">len</span><span class="p">(</span><span class="n">scorer</span><span class="p">)</span> <span class="o">==</span> <span class="mi">4</span><span class="p">:</span>
-        <span class="n">scorer</span><span class="p">[</span><span class="mi">2</span><span class="p">]</span> <span class="o">=</span> <span class="n">scorer</span><span class="p">[</span><span class="mi">2</span><span class="p">]</span> <span class="o">+</span> <span class="s">&quot; &quot;</span> <span class="o">+</span> <span class="n">scorer</span><span class="p">[</span><span class="mi">3</span><span class="p">]</span>
-  
-    <span class="n">num_str</span> <span class="o">=</span> <span class="n">rem_char</span><span class="p">(</span><span class="n">scorer</span><span class="p">[</span><span class="mi">1</span><span class="p">],</span> <span class="s">&#39;#&#39;</span><span class="p">)</span>
-    <span class="n">pl_tot</span> <span class="o">=</span> <span class="p">[</span><span class="n">e</span><span class="o">.</span><span class="n">strip</span><span class="p">()</span> <span class="k">for</span> <span class="n">e</span> <span class="ow">in</span> <span class="n">scorer</span><span class="p">[</span><span class="mi">2</span><span class="p">]</span><span class="o">.</span><span class="n">split</span><span class="p">(</span><span class="s">&quot;(&quot;</span><span class="p">)]</span>
+        <span class="n">scorer</span><span class="p">[</span><span class="mi">2</span><span class="p">]</span> <span class="o">=</span> <span class="n">scorer</span><span class="p">[</span><span class="mi">2</span><span class="p">]</span> <span class="o">+</span> <span class="s2">&quot; &quot;</span> <span class="o">+</span> <span class="n">scorer</span><span class="p">[</span><span class="mi">3</span><span class="p">]</span>
+
+    <span class="n">num_str</span> <span class="o">=</span> <span class="n">scorer</span><span class="p">[</span><span class="mi">1</span><span class="p">]</span><span class="o">.</span><span class="n">replace</span><span class="p">(</span><span class="s1">&#39;#&#39;</span><span class="p">,</span><span class="s1">&#39;&#39;</span><span class="p">)</span>
+    <span class="n">pl_tot</span> <span class="o">=</span> <span class="p">[</span><span class="n">e</span><span class="o">.</span><span class="n">strip</span><span class="p">()</span> <span class="k">for</span> <span class="n">e</span> <span class="ow">in</span> <span class="s1">&#39; &#39;</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="n">scorer</span><span class="p">[</span><span class="mi">2</span><span class="p">:])</span><span class="o">.</span><span class="n">split</span><span class="p">(</span><span class="s2">&quot;(&quot;</span><span class="p">)]</span>
   
     <span class="n">event</span><span class="o">.</span><span class="n">shooter</span> <span class="o">=</span> <span class="p">{</span>
-        <span class="s">&#39;team&#39;</span><span class="p">:</span> <span class="n">team_abbr_parser</span><span class="p">(</span><span class="n">scorer</span><span class="p">[</span><span class="mi">0</span><span class="p">]),</span>
-        <span class="s">&#39;num&#39;</span><span class="p">:</span> <span class="nb">int</span><span class="p">(</span><span class="n">num_str</span><span class="p">)</span> <span class="k">if</span> <span class="n">num_str</span><span class="o">.</span><span class="n">isdigit</span><span class="p">()</span> <span class="k">else</span> <span class="o">-</span><span class="mi">1</span><span class="p">,</span>
-        <span class="s">&#39;name&#39;</span><span class="p">:</span> <span class="n">pl_tot</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span>
+        <span class="s1">&#39;team&#39;</span><span class="p">:</span> <span class="n">team_abbr_parser</span><span class="p">(</span><span class="n">scorer</span><span class="p">[</span><span class="mi">0</span><span class="p">]),</span>
+        <span class="s1">&#39;num&#39;</span><span class="p">:</span> <span class="nb">int</span><span class="p">(</span><span class="n">num_str</span><span class="p">)</span> <span class="k">if</span> <span class="n">num_str</span><span class="o">.</span><span class="n">isdigit</span><span class="p">()</span> <span class="k">else</span> <span class="o">-</span><span class="mi">1</span><span class="p">,</span>
+        <span class="s1">&#39;name&#39;</span><span class="p">:</span> <span class="n">pl_tot</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span>
     <span class="p">}</span>
   
-    <span class="n">pl_tot</span><span class="p">[</span><span class="mi">1</span><span class="p">]</span> <span class="o">=</span> <span class="n">rem_char</span><span class="p">(</span><span class="n">pl_tot</span><span class="p">[</span><span class="mi">1</span><span class="p">],</span> <span class="s">&#39;()&#39;</span><span class="p">)</span>
-    <span class="n">event</span><span class="o">.</span><span class="n">shooter_seas_tot</span> <span class="o">=</span> <span class="nb">int</span><span class="p">(</span><span class="n">pl_tot</span><span class="p">[</span><span class="mi">1</span><span class="p">])</span> <span class="k">if</span> <span class="n">pl_tot</span><span class="p">[</span><span class="mi">1</span><span class="p">]</span><span class="o">.</span><span class="n">isdigit</span><span class="p">()</span> <span class="k">else</span> <span class="o">-</span><span class="mi">1</span>
+    <span class="n">pl_tot</span><span class="p">[</span><span class="mi">1</span><span class="p">]</span> <span class="o">=</span> <span class="n">pl_tot</span><span class="p">[</span><span class="mi">1</span><span class="p">]</span><span class="o">.</span><span class="n">replace</span><span class="p">(</span><span class="s1">&#39;(&#39;</span><span class="p">,</span><span class="s1">&#39;&#39;</span><span class="p">)</span><span class="o">.</span><span class="n">replace</span><span class="p">(</span><span class="s1">&#39;)&#39;</span><span class="p">,</span><span class="s1">&#39;&#39;</span><span class="p">)</span>
+    <span class="n">event</span><span class="o">.</span><span class="n">shooter_seas_tot</span> <span class="o">=</span> <span class="nb">int</span><span class="p">(</span><span class="n">pl_tot</span><span class="p">[</span><span class="mi">1</span><span class="p">])</span> <span class="k">if</span> <span class="n">pl_tot</span><span class="p">[</span><span class="mi">1</span><span class="p">]</span><span class="o">.</span><span class="n">isdigit</span><span class="p">()</span> <span class="k">else</span> <span class="o">-</span><span class="mi">1</span></div>
     
     
-<span class="k">def</span> <span class="nf">assist_from</span><span class="p">(</span><span class="n">a</span><span class="p">):</span></div>
-<div class="viewcode-block" id="assist_from"><a class="viewcode-back" href="../../../nhlscrapi.scrapr.html#nhlscrapi.scrapr.descparser.assist_from">[docs]</a>    <span class="n">pl</span> <span class="o">=</span> <span class="n">a</span><span class="o">.</span><span class="n">strip</span><span class="p">()</span><span class="o">.</span><span class="n">split</span><span class="p">(</span><span class="s">&quot; &quot;</span><span class="p">)</span>
-    <span class="n">num_str</span> <span class="o">=</span> <span class="n">rem_char</span><span class="p">(</span><span class="n">pl</span><span class="p">[</span><span class="mi">0</span><span class="p">],</span> <span class="s">&#39;#&#39;</span><span class="p">)</span>
+<div class="viewcode-block" id="assist_from"><a class="viewcode-back" href="../../../nhlscrapi.scrapr.html#nhlscrapi.scrapr.descparser.assist_from">[docs]</a><span class="k">def</span> <span class="nf">assist_from</span><span class="p">(</span><span class="n">a</span><span class="p">):</span>
+    <span class="n">pl</span> <span class="o">=</span> <span class="n">a</span><span class="o">.</span><span class="n">strip</span><span class="p">()</span><span class="o">.</span><span class="n">split</span><span class="p">(</span><span class="s2">&quot; &quot;</span><span class="p">)</span>
+    <span class="n">num_str</span> <span class="o">=</span> <span class="n">pl</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span><span class="o">.</span><span class="n">replace</span><span class="p">(</span><span class="s1">&#39;#&#39;</span><span class="p">,</span><span class="s1">&#39;&#39;</span><span class="p">)</span>
   
     <span class="n">r</span> <span class="o">=</span> <span class="p">[]</span>
     <span class="n">r</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="nb">int</span><span class="p">(</span><span class="n">num_str</span><span class="p">)</span> <span class="k">if</span> <span class="n">num_str</span><span class="o">.</span><span class="n">isdigit</span><span class="p">()</span> <span class="k">else</span> <span class="o">-</span><span class="mi">1</span><span class="p">)</span>
-    <span class="n">r</span><span class="o">.</span><span class="n">extend</span><span class="p">([</span><span class="n">p</span><span class="o">.</span><span class="n">strip</span><span class="p">()</span> <span class="k">for</span> <span class="n">p</span> <span class="ow">in</span> <span class="n">pl</span><span class="p">[</span><span class="mi">1</span><span class="p">]</span><span class="o">.</span><span class="n">split</span><span class="p">(</span><span class="s">&quot;(&quot;</span><span class="p">)</span> <span class="p">])</span>
+    <span class="n">r</span><span class="o">.</span><span class="n">extend</span><span class="p">([</span><span class="n">p</span><span class="o">.</span><span class="n">strip</span><span class="p">()</span> <span class="k">for</span> <span class="n">p</span> <span class="ow">in</span> <span class="n">pl</span><span class="p">[</span><span class="mi">1</span><span class="p">]</span><span class="o">.</span><span class="n">split</span><span class="p">(</span><span class="s2">&quot;(&quot;</span><span class="p">)</span> <span class="p">])</span>
     <span class="k">if</span> <span class="nb">len</span><span class="p">(</span><span class="n">r</span><span class="p">)</span> <span class="o">==</span> <span class="mi">3</span><span class="p">:</span>
-        <span class="n">r</span><span class="p">[</span><span class="mi">2</span><span class="p">]</span> <span class="o">=</span> <span class="n">rem_char</span><span class="p">(</span><span class="n">r</span><span class="p">[</span><span class="mi">2</span><span class="p">],</span> <span class="s">&#39;()&#39;</span><span class="p">)</span>
+        <span class="n">r</span><span class="p">[</span><span class="mi">2</span><span class="p">]</span> <span class="o">=</span> <span class="n">r</span><span class="p">[</span><span class="mi">2</span><span class="p">]</span><span class="o">.</span><span class="n">replace</span><span class="p">(</span><span class="s1">&#39;(&#39;</span><span class="p">,</span><span class="s1">&#39;&#39;</span><span class="p">)</span><span class="o">.</span><span class="n">replace</span><span class="p">(</span><span class="s1">&#39;)&#39;</span><span class="p">,</span><span class="s1">&#39;&#39;</span><span class="p">)</span>
     
-    <span class="k">return</span> <span class="n">r</span>
+    <span class="k">return</span> <span class="n">r</span></div>
   
   
 
 
-<span class="c">#############################</span>
-<span class="c">##</span>
-<span class="c">## parse a miss - &#39;08 format</span>
-<span class="c">##</span>
-<span class="c">#############################</span>
-<span class="c"># NYR #18 STAAL, Snap, Wide of Net, Off. Zone, 63 ft.</span>
-<span class="k">def</span> <span class="nf">parse_miss_08</span><span class="p">(</span><span class="n">event</span><span class="p">):</span></div>
-<div class="viewcode-block" id="parse_miss_08"><a class="viewcode-back" href="../../../nhlscrapi.scrapr.html#nhlscrapi.scrapr.descparser.parse_miss_08">[docs]</a>  
-    <span class="n">event</span><span class="o">.</span><span class="n">is_penalty_shot</span> <span class="o">=</span> <span class="s">&#39;penalty&#39;</span> <span class="ow">in</span> <span class="n">event</span><span class="o">.</span><span class="n">desc</span>
+<span class="c1">#############################</span>
+<span class="c1">##</span>
+<span class="c1">## parse a miss - &#39;08 format</span>
+<span class="c1">##</span>
+<span class="c1">#############################</span>
+<span class="c1"># NYR #18 STAAL, Snap, Wide of Net, Off. Zone, 63 ft.</span>
+<div class="viewcode-block" id="parse_miss_08"><a class="viewcode-back" href="../../../nhlscrapi.scrapr.html#nhlscrapi.scrapr.descparser.parse_miss_08">[docs]</a><span class="k">def</span> <span class="nf">parse_miss_08</span><span class="p">(</span><span class="n">event</span><span class="p">):</span>
+  
+    <span class="n">event</span><span class="o">.</span><span class="n">is_penalty_shot</span> <span class="o">=</span> <span class="s1">&#39;penalty&#39;</span> <span class="ow">in</span> <span class="n">event</span><span class="o">.</span><span class="n">desc</span>
     
-    <span class="n">s</span> <span class="o">=</span> <span class="n">split_and_strip</span><span class="p">(</span><span class="n">event</span><span class="o">.</span><span class="n">desc</span><span class="p">,</span> <span class="s">&quot;,&quot;</span><span class="p">)</span>
+    <span class="n">s</span> <span class="o">=</span> <span class="n">split_and_strip</span><span class="p">(</span><span class="n">event</span><span class="o">.</span><span class="n">desc</span><span class="p">,</span> <span class="s2">&quot;,&quot;</span><span class="p">)</span>
     <span class="n">s</span> <span class="o">=</span> <span class="n">rem_penalty_shot_desc</span><span class="p">(</span><span class="n">s</span><span class="p">)</span>
     
     <span class="n">event</span><span class="o">.</span><span class="n">shooter</span> <span class="o">=</span> <span class="n">team_num_name</span><span class="p">(</span><span class="n">s</span><span class="p">[</span><span class="mi">0</span><span class="p">])</span>
-    <span class="n">event</span><span class="o">.</span><span class="n">shot_type</span> <span class="o">=</span> <span class="n">s</span><span class="p">[</span><span class="mi">1</span><span class="p">]</span>
-    <span class="n">event</span><span class="o">.</span><span class="n">shot_miss_desc</span> <span class="o">=</span> <span class="n">s</span><span class="p">[</span><span class="mi">2</span><span class="p">]</span>
-    <span class="n">event</span><span class="o">.</span><span class="n">zone</span> <span class="o">=</span> <span class="n">s</span><span class="p">[</span><span class="mi">3</span><span class="p">]</span>
+    <span class="c1"># event.shot_type = s[1]</span>
+    <span class="c1"># event.shot_miss_desc = s[2]</span>
+    <span class="c1"># event.zone = s[3]</span>
+    <span class="c1"># event.dist = get_ft(s[4])</span>
+    
+    <span class="k">if</span> <span class="n">s</span><span class="p">[</span><span class="mi">1</span><span class="p">][</span><span class="o">-</span><span class="mi">4</span><span class="p">:]</span> <span class="o">==</span> <span class="s1">&#39;Zone&#39;</span><span class="p">:</span> <span class="c1"># error report 1090</span>
+        <span class="n">event</span><span class="o">.</span><span class="n">shot_type</span> <span class="o">=</span> <span class="s1">&#39;&#39;</span>
+        <span class="n">event</span><span class="o">.</span><span class="n">shot_miss_desc</span> <span class="o">=</span> <span class="s1">&#39;&#39;</span>
+        <span class="n">event</span><span class="o">.</span><span class="n">zone</span> <span class="o">=</span> <span class="n">s</span><span class="p">[</span><span class="mi">1</span><span class="p">]</span>
+        <span class="n">event</span><span class="o">.</span><span class="n">dist</span> <span class="o">=</span> <span class="n">get_ft</span><span class="p">(</span><span class="n">s</span><span class="p">[</span><span class="mi">2</span><span class="p">])</span>
+    <span class="k">elif</span> <span class="n">s</span><span class="p">[</span><span class="mi">2</span><span class="p">][</span><span class="o">-</span><span class="mi">4</span><span class="p">:]</span> <span class="o">==</span> <span class="s1">&#39;Zone&#39;</span><span class="p">:</span> <span class="c1"># error report 171</span>
+        <span class="n">event</span><span class="o">.</span><span class="n">shot_miss_desc</span> <span class="o">=</span> <span class="s1">&#39;&#39;</span>
+        <span class="n">event</span><span class="o">.</span><span class="n">zone</span> <span class="o">=</span> <span class="n">s</span><span class="p">[</span><span class="mi">2</span><span class="p">]</span>
+        <span class="n">event</span><span class="o">.</span><span class="n">dist</span> <span class="o">=</span> <span class="n">get_ft</span><span class="p">(</span><span class="n">s</span><span class="p">[</span><span class="mi">3</span><span class="p">])</span>
+    <span class="k">elif</span> <span class="n">s</span><span class="p">[</span><span class="mi">3</span><span class="p">][</span><span class="o">-</span><span class="mi">3</span><span class="p">:]</span> <span class="o">==</span> <span class="s1">&#39;ft.&#39;</span><span class="p">:</span> <span class="c1"># error report 467</span>
+        <span class="n">event</span><span class="o">.</span><span class="n">shot_miss_desc</span> <span class="o">=</span> <span class="n">s</span><span class="p">[</span><span class="mi">2</span><span class="p">]</span>
+        <span class="n">event</span><span class="o">.</span><span class="n">zone</span> <span class="o">=</span> <span class="s1">&#39;&#39;</span>
+        <span class="n">event</span><span class="o">.</span><span class="n">dist</span> <span class="o">=</span> <span class="n">get_ft</span><span class="p">(</span><span class="n">s</span><span class="p">[</span><span class="mi">3</span><span class="p">])</span>
+    <span class="k">else</span><span class="p">:</span>
+        <span class="n">event</span><span class="o">.</span><span class="n">shot_miss_desc</span> <span class="o">=</span> <span class="n">s</span><span class="p">[</span><span class="mi">2</span><span class="p">]</span>
+        <span class="n">event</span><span class="o">.</span><span class="n">zone</span> <span class="o">=</span> <span class="n">s</span><span class="p">[</span><span class="mi">3</span><span class="p">]</span>
+        <span class="n">event</span><span class="o">.</span><span class="n">dist</span> <span class="o">=</span> <span class="n">get_ft</span><span class="p">(</span><span class="n">s</span><span class="p">[</span><span class="mi">4</span><span class="p">])</span></div>
   
-    <span class="n">event</span><span class="o">.</span><span class="n">dist</span> <span class="o">=</span> <span class="n">get_ft</span><span class="p">(</span><span class="n">s</span><span class="p">[</span><span class="mi">4</span><span class="p">])</span>
   
   
+<span class="c1">#############################</span>
+<span class="c1">##</span>
+<span class="c1">## parse faceoff - &#39;08 format</span>
+<span class="c1">##</span>
+<span class="c1">#############################</span>
+<span class="c1"># VAN won Off. Zone - NYR #19 RICHARDS vs VAN #22 SEDIN</span>
+<div class="viewcode-block" id="parse_faceoff_08"><a class="viewcode-back" href="../../../nhlscrapi.scrapr.html#nhlscrapi.scrapr.descparser.parse_faceoff_08">[docs]</a><span class="k">def</span> <span class="nf">parse_faceoff_08</span><span class="p">(</span><span class="n">event</span><span class="p">):</span>
+    <span class="n">s</span> <span class="o">=</span> <span class="n">split_and_strip</span><span class="p">(</span><span class="n">event</span><span class="o">.</span><span class="n">desc</span><span class="p">,</span> <span class="s2">&quot; - &quot;</span><span class="p">)</span>
   
-<span class="c">#############################</span>
-<span class="c">##</span>
-<span class="c">## parse faceoff - &#39;08 format</span>
-<span class="c">##</span>
-<span class="c">#############################</span>
-<span class="c"># VAN won Off. Zone - NYR #19 RICHARDS vs VAN #22 SEDIN</span>
-<span class="k">def</span> <span class="nf">parse_faceoff_08</span><span class="p">(</span><span class="n">event</span><span class="p">):</span></div>
-<div class="viewcode-block" id="parse_faceoff_08"><a class="viewcode-back" href="../../../nhlscrapi.scrapr.html#nhlscrapi.scrapr.descparser.parse_faceoff_08">[docs]</a>    <span class="n">s</span> <span class="o">=</span> <span class="n">split_and_strip</span><span class="p">(</span><span class="n">event</span><span class="o">.</span><span class="n">desc</span><span class="p">,</span> <span class="s">&quot; - &quot;</span><span class="p">)</span>
-  
-    <span class="n">w_loc</span> <span class="o">=</span> <span class="n">split_and_strip</span><span class="p">(</span><span class="n">s</span><span class="p">[</span><span class="mi">0</span><span class="p">],</span> <span class="s">&quot;won&quot;</span><span class="p">)</span>
+    <span class="n">w_loc</span> <span class="o">=</span> <span class="n">split_and_strip</span><span class="p">(</span><span class="n">s</span><span class="p">[</span><span class="mi">0</span><span class="p">],</span> <span class="s2">&quot;won&quot;</span><span class="p">)</span>
     <span class="n">event</span><span class="o">.</span><span class="n">winner</span> <span class="o">=</span> <span class="n">w_loc</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span>
     <span class="n">event</span><span class="o">.</span><span class="n">zone</span> <span class="o">=</span> <span class="n">w_loc</span><span class="p">[</span><span class="mi">1</span><span class="p">]</span>
   
-    <span class="n">vs</span> <span class="o">=</span> <span class="n">s</span><span class="p">[</span><span class="mi">1</span><span class="p">]</span><span class="o">.</span><span class="n">split</span><span class="p">(</span><span class="s">&quot;vs&quot;</span><span class="p">)</span>
+    <span class="n">vs</span> <span class="o">=</span> <span class="n">s</span><span class="p">[</span><span class="mi">1</span><span class="p">]</span><span class="o">.</span><span class="n">split</span><span class="p">(</span><span class="s2">&quot;vs&quot;</span><span class="p">)</span>
     <span class="n">tnn</span> <span class="o">=</span> <span class="n">team_num_name</span><span class="p">(</span><span class="n">vs</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span><span class="o">.</span><span class="n">strip</span><span class="p">())</span>
     <span class="k">try</span><span class="p">:</span>
         <span class="n">tnn2</span> <span class="o">=</span> <span class="n">team_num_name</span><span class="p">(</span><span class="n">vs</span><span class="p">[</span><span class="mi">1</span><span class="p">]</span><span class="o">.</span><span class="n">strip</span><span class="p">())</span>
         <span class="n">event</span><span class="o">.</span><span class="n">head_to_head</span> <span class="o">=</span> <span class="p">[</span> <span class="n">tnn</span><span class="p">,</span> <span class="n">tnn2</span> <span class="p">]</span>
     <span class="k">except</span><span class="p">:</span>
-        <span class="k">print</span><span class="p">(</span><span class="n">vs</span><span class="p">)</span>
+        <span class="k">print</span><span class="p">(</span><span class="n">vs</span><span class="p">)</span></div>
 
 
 
-<span class="c">#############################</span>
-<span class="c">##</span>
-<span class="c">## parse hit - &#39;08 format</span>
-<span class="c">##</span>
-<span class="c">#############################</span>
-<span class="c"># VAN #3 BIEKSA HIT NYR #21 STEPAN, Def. Zone</span>
-<span class="k">def</span> <span class="nf">parse_hit_08</span><span class="p">(</span><span class="n">event</span><span class="p">):</span></div>
-<div class="viewcode-block" id="parse_hit_08"><a class="viewcode-back" href="../../../nhlscrapi.scrapr.html#nhlscrapi.scrapr.descparser.parse_hit_08">[docs]</a>    <span class="n">s</span> <span class="o">=</span> <span class="n">split_and_strip</span><span class="p">(</span><span class="n">event</span><span class="o">.</span><span class="n">desc</span><span class="p">,</span> <span class="s">&quot; HIT &quot;</span><span class="p">)</span>
+<span class="c1">#############################</span>
+<span class="c1">##</span>
+<span class="c1">## parse hit - &#39;08 format</span>
+<span class="c1">##</span>
+<span class="c1">#############################</span>
+<span class="c1"># VAN #3 BIEKSA HIT NYR #21 STEPAN, Def. Zone</span>
+<div class="viewcode-block" id="parse_hit_08"><a class="viewcode-back" href="../../../nhlscrapi.scrapr.html#nhlscrapi.scrapr.descparser.parse_hit_08">[docs]</a><span class="k">def</span> <span class="nf">parse_hit_08</span><span class="p">(</span><span class="n">event</span><span class="p">):</span>
+    <span class="n">s</span> <span class="o">=</span> <span class="n">split_and_strip</span><span class="p">(</span><span class="n">event</span><span class="o">.</span><span class="n">desc</span><span class="p">,</span> <span class="s2">&quot; HIT &quot;</span><span class="p">)</span>
   
     <span class="n">event</span><span class="o">.</span><span class="n">hit_by</span> <span class="o">=</span> <span class="n">team_num_name</span><span class="p">(</span><span class="n">s</span><span class="p">[</span><span class="mi">0</span><span class="p">])</span>
-    <span class="n">event</span><span class="o">.</span><span class="n">team</span> <span class="o">=</span> <span class="n">event</span><span class="o">.</span><span class="n">hit_by</span><span class="p">[</span><span class="s">&#39;team&#39;</span><span class="p">]</span>
+    <span class="n">event</span><span class="o">.</span><span class="n">team</span> <span class="o">=</span> <span class="n">event</span><span class="o">.</span><span class="n">hit_by</span><span class="p">[</span><span class="s1">&#39;team&#39;</span><span class="p">]</span>
   
-    <span class="n">p_z</span> <span class="o">=</span> <span class="n">s</span><span class="p">[</span><span class="mi">1</span><span class="p">]</span><span class="o">.</span><span class="n">split</span><span class="p">(</span><span class="s">&quot;,&quot;</span><span class="p">)</span>
+    <span class="n">p_z</span> <span class="o">=</span> <span class="n">s</span><span class="p">[</span><span class="mi">1</span><span class="p">]</span><span class="o">.</span><span class="n">split</span><span class="p">(</span><span class="s2">&quot;,&quot;</span><span class="p">)</span>
     <span class="n">event</span><span class="o">.</span><span class="n">player_hit</span> <span class="o">=</span> <span class="n">team_num_name</span><span class="p">(</span><span class="n">p_z</span><span class="p">[</span><span class="mi">0</span><span class="p">])</span>
   
-    <span class="n">event</span><span class="o">.</span><span class="n">zone</span> <span class="o">=</span> <span class="n">p_z</span><span class="p">[</span><span class="mi">1</span><span class="p">]</span><span class="o">.</span><span class="n">strip</span><span class="p">()</span>
+    <span class="n">event</span><span class="o">.</span><span class="n">zone</span> <span class="o">=</span> <span class="n">p_z</span><span class="p">[</span><span class="mi">1</span><span class="p">]</span><span class="o">.</span><span class="n">strip</span><span class="p">()</span> <span class="k">if</span> <span class="nb">len</span><span class="p">(</span><span class="n">p_z</span><span class="p">)</span> <span class="o">&gt;</span> <span class="mi">1</span> <span class="k">else</span> <span class="s1">&#39;&#39;</span></div>
   
   
   
 
-<span class="c">#############################</span>
-<span class="c">##</span>
-<span class="c">## parse blocked shot - &#39;08 format</span>
-<span class="c">##</span>
-<span class="c">#############################</span>
-<span class="c"># VAN #14 BURROWS BLOCKED BY NYR #27 MCDONAGH, Snap, Def. Zone</span>
-<span class="k">def</span> <span class="nf">parse_block_08</span><span class="p">(</span><span class="n">event</span><span class="p">):</span></div>
-<div class="viewcode-block" id="parse_block_08"><a class="viewcode-back" href="../../../nhlscrapi.scrapr.html#nhlscrapi.scrapr.descparser.parse_block_08">[docs]</a>    <span class="n">s</span> <span class="o">=</span> <span class="n">split_and_strip</span><span class="p">(</span><span class="n">event</span><span class="o">.</span><span class="n">desc</span><span class="p">,</span> <span class="s">&quot;BLOCKED BY&quot;</span><span class="p">)</span>
-
+<span class="c1">#############################</span>
+<span class="c1">##</span>
+<span class="c1">## parse blocked shot - &#39;08 format</span>
+<span class="c1">##</span>
+<span class="c1">#############################</span>
+<span class="c1"># VAN #14 BURROWS BLOCKED BY NYR #27 MCDONAGH, Snap, Def. Zone</span>
+<div class="viewcode-block" id="parse_block_08"><a class="viewcode-back" href="../../../nhlscrapi.scrapr.html#nhlscrapi.scrapr.descparser.parse_block_08">[docs]</a><span class="k">def</span> <span class="nf">parse_block_08</span><span class="p">(</span><span class="n">event</span><span class="p">):</span>
+    <span class="n">s</span> <span class="o">=</span> <span class="n">split_and_strip</span><span class="p">(</span><span class="n">event</span><span class="o">.</span><span class="n">desc</span><span class="p">,</span> <span class="s2">&quot;BLOCKED BY&quot;</span><span class="p">)</span>
     <span class="n">event</span><span class="o">.</span><span class="n">shooter</span> <span class="o">=</span> <span class="n">team_num_name</span><span class="p">(</span><span class="n">s</span><span class="p">[</span><span class="mi">0</span><span class="p">])</span>
 
-    <span class="n">s</span> <span class="o">=</span> <span class="n">split_and_strip</span><span class="p">(</span><span class="n">s</span><span class="p">[</span><span class="mi">1</span><span class="p">],</span> <span class="s">&quot;,&quot;</span><span class="p">)</span>
+    <span class="n">s</span> <span class="o">=</span> <span class="n">split_and_strip</span><span class="p">(</span><span class="n">s</span><span class="p">[</span><span class="mi">1</span><span class="p">],</span> <span class="s2">&quot;,&quot;</span><span class="p">)</span>
     <span class="n">event</span><span class="o">.</span><span class="n">blocked_by</span> <span class="o">=</span> <span class="n">team_num_name</span><span class="p">(</span><span class="n">s</span><span class="p">[</span><span class="mi">0</span><span class="p">])</span>
 
-    <span class="n">event</span><span class="o">.</span><span class="n">shot_type</span> <span class="o">=</span> <span class="n">s</span><span class="p">[</span><span class="mi">1</span><span class="p">]</span>
-    <span class="n">event</span><span class="o">.</span><span class="n">zone</span> <span class="o">=</span> <span class="n">s</span><span class="p">[</span><span class="mi">2</span><span class="p">]</span>
-  
-  
+    <span class="k">if</span> <span class="nb">len</span><span class="p">(</span><span class="n">s</span><span class="p">)</span> <span class="o">==</span> <span class="mi">3</span><span class="p">:</span>  <span class="c1"># Normal number of items found (expected case)</span>
+        <span class="n">event</span><span class="o">.</span><span class="n">shot_type</span> <span class="o">=</span> <span class="n">s</span><span class="p">[</span><span class="mi">1</span><span class="p">]</span>
+        <span class="n">event</span><span class="o">.</span><span class="n">zone</span> <span class="o">=</span> <span class="n">s</span><span class="p">[</span><span class="mi">2</span><span class="p">]</span>
+    <span class="k">else</span><span class="p">:</span>  <span class="c1"># Something is missing - shot or zone</span>
+        <span class="k">if</span> <span class="s1">&#39;Zone&#39;</span> <span class="ow">in</span> <span class="n">s</span><span class="p">[</span><span class="mi">1</span><span class="p">]:</span>  <span class="c1"># We have zone, not shot.</span>
+            <span class="n">event</span><span class="o">.</span><span class="n">shot_type</span> <span class="o">=</span> <span class="s1">&#39;&#39;</span>
+            <span class="n">event</span><span class="o">.</span><span class="n">zone</span> <span class="o">=</span> <span class="n">s</span><span class="p">[</span><span class="mi">1</span><span class="p">]</span>
+        <span class="k">else</span><span class="p">:</span>  <span class="c1"># Shot, not zone.</span>
+            <span class="n">event</span><span class="o">.</span><span class="n">shot_type</span> <span class="o">=</span> <span class="n">s</span><span class="p">[</span><span class="mi">1</span><span class="p">]</span>
+            <span class="n">event</span><span class="o">.</span><span class="n">zone</span> <span class="o">=</span> <span class="s1">&#39;&#39;</span></div>
 
-<span class="c">#############################</span>
-<span class="c">##</span>
-<span class="c">## parse takeaway - &#39;08 format</span>
-<span class="c">##</span>
-<span class="c">#############################</span>
-<span class="c"># NYR TAKEAWAY - #27 MCDONAGH, Def. Zone</span>
-<span class="k">def</span> <span class="nf">parse_takeaway_08</span><span class="p">(</span><span class="n">event</span><span class="p">):</span></div>
-<div class="viewcode-block" id="parse_takeaway_08"><a class="viewcode-back" href="../../../nhlscrapi.scrapr.html#nhlscrapi.scrapr.descparser.parse_takeaway_08">[docs]</a>    <span class="n">s</span> <span class="o">=</span> <span class="n">split_and_strip</span><span class="p">(</span><span class="n">event</span><span class="o">.</span><span class="n">desc</span><span class="p">,</span> <span class="s">&quot; - &quot;</span><span class="p">)</span>
+
+
+
+<span class="c1">#############################</span>
+<span class="c1">##</span>
+<span class="c1">## parse takeaway - &#39;08 format</span>
+<span class="c1">##</span>
+<span class="c1">#############################</span>
+<span class="c1"># NYR TAKEAWAY - #27 MCDONAGH, Def. Zone</span>
+<div class="viewcode-block" id="parse_takeaway_08"><a class="viewcode-back" href="../../../nhlscrapi.scrapr.html#nhlscrapi.scrapr.descparser.parse_takeaway_08">[docs]</a><span class="k">def</span> <span class="nf">parse_takeaway_08</span><span class="p">(</span><span class="n">event</span><span class="p">):</span>
+    <span class="n">s</span> <span class="o">=</span> <span class="n">split_and_strip</span><span class="p">(</span><span class="n">event</span><span class="o">.</span><span class="n">desc</span><span class="p">,</span> <span class="s2">&quot; - &quot;</span><span class="p">)</span>
   
-    <span class="n">s</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span> <span class="o">=</span> <span class="n">s</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span><span class="o">.</span><span class="n">replace</span><span class="p">(</span><span class="s">&#39;?&#39;</span><span class="p">,</span> <span class="s">&#39; &#39;</span><span class="p">)</span>
-    <span class="n">event</span><span class="o">.</span><span class="n">team</span> <span class="o">=</span> <span class="n">team_abbr_parser</span><span class="p">(</span><span class="n">s</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span><span class="o">.</span><span class="n">split</span><span class="p">(</span><span class="s">&quot; &quot;</span><span class="p">)[</span><span class="mi">0</span><span class="p">]</span><span class="o">.</span><span class="n">strip</span><span class="p">())</span>
+    <span class="n">s</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span> <span class="o">=</span> <span class="n">s</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span><span class="o">.</span><span class="n">replace</span><span class="p">(</span><span class="s1">&#39;?&#39;</span><span class="p">,</span> <span class="s1">&#39; &#39;</span><span class="p">)</span>
+    <span class="n">event</span><span class="o">.</span><span class="n">team</span> <span class="o">=</span> <span class="n">team_abbr_parser</span><span class="p">(</span><span class="n">s</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span><span class="o">.</span><span class="n">split</span><span class="p">(</span><span class="s2">&quot; &quot;</span><span class="p">)[</span><span class="mi">0</span><span class="p">]</span><span class="o">.</span><span class="n">strip</span><span class="p">())</span>
   
-    <span class="n">s</span> <span class="o">=</span> <span class="n">split_and_strip</span><span class="p">(</span><span class="n">s</span><span class="p">[</span><span class="mi">1</span><span class="p">],</span> <span class="s">&quot;,&quot;</span><span class="p">)</span>
-    <span class="n">tnn</span> <span class="o">=</span> <span class="n">team_num_name</span><span class="p">(</span><span class="nb">str</span><span class="p">(</span><span class="s">&#39;team &#39;</span> <span class="o">+</span> <span class="n">s</span><span class="p">[</span><span class="mi">0</span><span class="p">]))</span>
-    <span class="n">event</span><span class="o">.</span><span class="n">player_num</span> <span class="o">=</span> <span class="n">tnn</span><span class="p">[</span><span class="s">&quot;num&quot;</span><span class="p">]</span>
-    <span class="n">event</span><span class="o">.</span><span class="n">player_name</span> <span class="o">=</span> <span class="n">tnn</span><span class="p">[</span><span class="s">&quot;name&quot;</span><span class="p">]</span>
-    <span class="n">event</span><span class="o">.</span><span class="n">zone</span> <span class="o">=</span> <span class="n">s</span><span class="p">[</span><span class="mi">1</span><span class="p">]</span>
+    <span class="n">s</span> <span class="o">=</span> <span class="n">split_and_strip</span><span class="p">(</span><span class="n">s</span><span class="p">[</span><span class="mi">1</span><span class="p">],</span> <span class="s2">&quot;,&quot;</span><span class="p">)</span>
+    <span class="n">tnn</span> <span class="o">=</span> <span class="n">team_num_name</span><span class="p">(</span><span class="nb">str</span><span class="p">(</span><span class="s1">&#39;team &#39;</span> <span class="o">+</span> <span class="n">s</span><span class="p">[</span><span class="mi">0</span><span class="p">]))</span>
+    <span class="n">event</span><span class="o">.</span><span class="n">player_num</span> <span class="o">=</span> <span class="n">tnn</span><span class="p">[</span><span class="s2">&quot;num&quot;</span><span class="p">]</span>
+    <span class="n">event</span><span class="o">.</span><span class="n">player_name</span> <span class="o">=</span> <span class="n">tnn</span><span class="p">[</span><span class="s2">&quot;name&quot;</span><span class="p">]</span>
+    <span class="n">event</span><span class="o">.</span><span class="n">zone</span> <span class="o">=</span> <span class="n">s</span><span class="p">[</span><span class="mi">1</span><span class="p">]</span></div>
     
   
   
 
-<span class="c">#############################</span>
-<span class="c">##</span>
-<span class="c">## parse giveaway - &#39;08 format</span>
-<span class="c">## same form as takeaway</span>
-<span class="c">##</span>
-<span class="c">#############################</span>
-<span class="c"># NYR GIVEAWAY - #21 STEPAN, Def. Zone</span>
-<span class="k">def</span> <span class="nf">parse_giveaway_08</span><span class="p">(</span><span class="n">event</span><span class="p">):</span></div>
-<div class="viewcode-block" id="parse_giveaway_08"><a class="viewcode-back" href="../../../nhlscrapi.scrapr.html#nhlscrapi.scrapr.descparser.parse_giveaway_08">[docs]</a>    <span class="n">parse_takeaway_08</span><span class="p">(</span><span class="n">event</span><span class="p">)</span>
+<span class="c1">#############################</span>
+<span class="c1">##</span>
+<span class="c1">## parse giveaway - &#39;08 format</span>
+<span class="c1">## same form as takeaway</span>
+<span class="c1">##</span>
+<span class="c1">#############################</span>
+<span class="c1"># NYR GIVEAWAY - #21 STEPAN, Def. Zone</span>
+<div class="viewcode-block" id="parse_giveaway_08"><a class="viewcode-back" href="../../../nhlscrapi.scrapr.html#nhlscrapi.scrapr.descparser.parse_giveaway_08">[docs]</a><span class="k">def</span> <span class="nf">parse_giveaway_08</span><span class="p">(</span><span class="n">event</span><span class="p">):</span>
+    <span class="n">parse_takeaway_08</span><span class="p">(</span><span class="n">event</span><span class="p">)</span></div>
   
   
   
   
   
-<span class="c">#############################</span>
-<span class="c">##</span>
-<span class="c">## parse shootout</span>
-<span class="c">##</span>
-<span class="c">#############################</span>
-<span class="k">def</span> <span class="nf">parse_shootout</span><span class="p">(</span><span class="n">event</span><span class="p">):</span></div>
-<div class="viewcode-block" id="parse_shootout"><a class="viewcode-back" href="../../../nhlscrapi.scrapr.html#nhlscrapi.scrapr.descparser.parse_shootout">[docs]</a>    <span class="n">s</span> <span class="o">=</span> <span class="n">split_and_strip</span><span class="p">(</span><span class="n">event</span><span class="o">.</span><span class="n">desc</span><span class="p">,</span> <span class="s">&#39;,&#39;</span><span class="p">)</span>
+<span class="c1">#############################</span>
+<span class="c1">##</span>
+<span class="c1">## parse shootout</span>
+<span class="c1">##</span>
+<span class="c1">#############################</span>
+<div class="viewcode-block" id="parse_shootout"><a class="viewcode-back" href="../../../nhlscrapi.scrapr.html#nhlscrapi.scrapr.descparser.parse_shootout">[docs]</a><span class="k">def</span> <span class="nf">parse_shootout</span><span class="p">(</span><span class="n">event</span><span class="p">):</span>
+    <span class="n">s</span> <span class="o">=</span> <span class="n">split_and_strip</span><span class="p">(</span><span class="n">event</span><span class="o">.</span><span class="n">desc</span><span class="p">,</span> <span class="s1">&#39;,&#39;</span><span class="p">)</span>
   
-    <span class="n">d_str</span> <span class="o">=</span> <span class="n">s</span><span class="p">[</span><span class="o">-</span><span class="mi">1</span><span class="p">]</span><span class="o">.</span><span class="n">split</span><span class="p">(</span><span class="s">&#39; &#39;</span><span class="p">)[</span><span class="mi">0</span><span class="p">]</span>
+    <span class="n">d_str</span> <span class="o">=</span> <span class="n">s</span><span class="p">[</span><span class="o">-</span><span class="mi">1</span><span class="p">]</span><span class="o">.</span><span class="n">split</span><span class="p">(</span><span class="s1">&#39; &#39;</span><span class="p">)[</span><span class="mi">0</span><span class="p">]</span>
     <span class="n">event</span><span class="o">.</span><span class="n">dist</span> <span class="o">=</span> <span class="nb">int</span><span class="p">(</span><span class="n">d_str</span><span class="p">)</span> <span class="k">if</span> <span class="n">d_str</span><span class="o">.</span><span class="n">isdigit</span><span class="p">()</span> <span class="k">else</span> <span class="mi">0</span>
   
     <span class="n">event</span><span class="o">.</span><span class="n">shot_type</span> <span class="o">=</span> <span class="n">s</span><span class="p">[</span><span class="mi">1</span><span class="p">]</span>
   
-    <span class="n">tnn</span> <span class="o">=</span> <span class="n">split_and_strip</span><span class="p">(</span><span class="n">s</span><span class="p">[</span><span class="mi">0</span><span class="p">],</span> <span class="s">&#39; &#39;</span><span class="p">)</span>
+    <span class="n">tnn</span> <span class="o">=</span> <span class="n">split_and_strip</span><span class="p">(</span><span class="n">s</span><span class="p">[</span><span class="mi">0</span><span class="p">],</span> <span class="s1">&#39; &#39;</span><span class="p">)</span>
     <span class="k">if</span> <span class="nb">len</span><span class="p">(</span><span class="n">tnn</span><span class="p">)</span> <span class="o">==</span> <span class="mi">3</span><span class="p">:</span>
-        <span class="n">event</span><span class="o">.</span><span class="n">shooter</span> <span class="o">=</span> <span class="n">team_num_name</span><span class="p">(</span><span class="s">&#39; &#39;</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="n">tnn</span><span class="p">))</span>
+        <span class="n">event</span><span class="o">.</span><span class="n">shooter</span> <span class="o">=</span> <span class="n">team_num_name</span><span class="p">(</span><span class="s1">&#39; &#39;</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="n">tnn</span><span class="p">))</span>
     <span class="k">elif</span> <span class="nb">len</span><span class="p">(</span><span class="n">tnn</span><span class="p">)</span> <span class="o">==</span> <span class="mi">5</span><span class="p">:</span>
-        <span class="n">event</span><span class="o">.</span><span class="n">shooter</span> <span class="o">=</span> <span class="n">team_num_name</span><span class="p">(</span><span class="s">&#39; &#39;</span><span class="o">.</span><span class="n">join</span><span class="p">([</span><span class="n">tnn</span><span class="p">[</span><span class="mi">0</span><span class="p">],</span> <span class="n">tnn</span><span class="p">[</span><span class="mi">3</span><span class="p">],</span> <span class="n">tnn</span><span class="p">[</span><span class="mi">4</span><span class="p">]]))</span>
-</pre></div></div>
+        <span class="n">event</span><span class="o">.</span><span class="n">shooter</span> <span class="o">=</span> <span class="n">team_num_name</span><span class="p">(</span><span class="s1">&#39; &#39;</span><span class="o">.</span><span class="n">join</span><span class="p">([</span><span class="n">tnn</span><span class="p">[</span><span class="mi">0</span><span class="p">],</span> <span class="n">tnn</span><span class="p">[</span><span class="mi">3</span><span class="p">],</span> <span class="n">tnn</span><span class="p">[</span><span class="mi">4</span><span class="p">]]))</span></div>
+</pre></div>
 
           </div>
         </div>
@@ -373,8 +416,8 @@
       &copy;2015, Author.
       
       |
-      Powered by <a href="http://sphinx-doc.org/">Sphinx 1.3.1</a>
-      &amp; <a href="https://github.com/bitprophet/alabaster">Alabaster 0.7.6</a>
+      Powered by <a href="http://sphinx-doc.org/">Sphinx 1.3.5</a>
+      &amp; <a href="https://github.com/bitprophet/alabaster">Alabaster 0.7.7</a>
       
     </div>
 

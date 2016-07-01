@@ -19,7 +19,7 @@ def __goal_type(**kwargs):
   skater_ct = kwargs['skater_ct'] if 'skater_ct' in kwargs else 12
   period = kwargs['period'] if 'period' in kwargs else 1
   gt = kwargs['game_type']
-  
+
   if skater_ct <= 7 and period > 4 and gt < 3:
     return ET.ShootOutGoal
   else:
@@ -52,14 +52,14 @@ def event_type_mapper(event_str, **kwargs):
     "GEND": lambda **kwargs: ET.GameEnd,
     "SOC": lambda **kwargs: ET.ShootOutEnd
   }
-  
+
   e_type = event_type_map[event_str](**kwargs) if event_str in event_type_map else ET.Event
-  
+
   return EF.Create(e_type)
-      
-      
+
+
 def parse_event_desc(event, season = 2008):
-    
+
     if event.event_type == ET.Shot and season >= 2008:
         dp.parse_shot_desc_08(event)
 #    elif event.event_type == ET.PenaltyShot:

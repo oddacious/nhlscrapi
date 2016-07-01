@@ -27,7 +27,7 @@
     <link rel="up" title="Module code" href="../../index.html" />
    
   
-  <meta name="viewport" content="width=device-width, initial-scale=0.9, maximum-scale=0.9">
+  <meta name="viewport" content="width=device-width, initial-scale=0.9, maximum-scale=0.9" />
 
   </head>
   <body role="document">  
@@ -38,110 +38,143 @@
           <div class="body" role="main">
             
   <h1>Source code for nhlscrapi.scrapr.nhlreq</h1><div class="highlight"><pre>
+<span></span>
 <span class="kn">import</span> <span class="nn">requests</span>
 
-<span class="k">class</span> <span class="nc">NHLCn</span><span class="p">(</span><span class="nb">object</span><span class="p">):</span>
-<div class="viewcode-block" id="NHLCn"><a class="viewcode-back" href="../../../nhlscrapi.scrapr.html#nhlscrapi.scrapr.nhlreq.NHLCn">[docs]</a>    <span class="sd">&quot;&quot;&quot;</span>
-<span class="sd">    Builds the URLs, makes the HTTP calls and retreives the raw HTML associated with various NHL report data. If</span>
-<span class="sd">    an error occurs in the retrieval process, the error is recorded in ``req_err``.</span>
+<span class="kn">from</span> <span class="nn">nhlscrapi.scrapr.datacontainer</span> <span class="kn">import</span> <span class="n">DataContainer</span>
+
+<div class="viewcode-block" id="NHLCn"><a class="viewcode-back" href="../../../nhlscrapi.scrapr.html#nhlscrapi.scrapr.nhlreq.NHLCn">[docs]</a><span class="k">class</span> <span class="nc">NHLCn</span><span class="p">(</span><span class="nb">object</span><span class="p">):</span>
+    <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    Builds the URLs, makes the HTTP calls and retreives the raw HTML and/or JSON associated with various NHL </span>
+<span class="sd">    report data. If an error occurs in the retrieval process, the error is recorded in ``req_err``.</span>
 <span class="sd">    &quot;&quot;&quot;</span>
-    <span class="n">__domain</span> <span class="o">=</span> <span class="s">&#39;http://www.nhl.com/&#39;</span>
-    
+    <span class="n">__domain</span> <span class="o">=</span> <span class="s1">&#39;http://www.nhl.com/&#39;</span>
+    <span class="n">__old_json_domain</span> <span class="o">=</span> <span class="s1">&#39;http://live.nhl.com/&#39;</span>
+    <span class="n">__new_json_domain</span> <span class="o">=</span> <span class="s1">&#39;http://statsapi.web.nhl.com/&#39;</span>
+
     <span class="k">def</span> <span class="nf">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">html_src</span> <span class="o">=</span> <span class="bp">None</span>
         <span class="sd">&quot;&quot;&quot;The HTML source of the last NHL page requested.&quot;&quot;&quot;</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">json_src</span> <span class="o">=</span> <span class="bp">None</span>
+        <span class="sd">&quot;&quot;&quot;The JSON source of the last NHL page requested.&quot;&quot;&quot;</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">req_err</span> <span class="o">=</span> <span class="bp">None</span>
         <span class="sd">&quot;&quot;&quot;Error from the last HTTP request.&quot;&quot;&quot;</span>
-        
+
     <span class="k">def</span> <span class="nf">__html_rep</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">game_key</span><span class="p">,</span> <span class="n">rep_code</span><span class="p">):</span>
         <span class="sd">&quot;&quot;&quot;Retrieves the nhl html reports for the specified game and report code&quot;&quot;&quot;</span>
         <span class="n">seas</span><span class="p">,</span> <span class="n">gt</span><span class="p">,</span> <span class="n">num</span> <span class="o">=</span> <span class="n">game_key</span><span class="o">.</span><span class="n">to_tuple</span><span class="p">()</span>
-        <span class="n">url</span> <span class="o">=</span> <span class="p">[</span> <span class="bp">self</span><span class="o">.</span><span class="n">__domain</span><span class="p">,</span> <span class="s">&quot;scores/htmlreports/&quot;</span><span class="p">,</span> <span class="nb">str</span><span class="p">(</span><span class="n">seas</span><span class="o">-</span><span class="mi">1</span><span class="p">),</span> <span class="nb">str</span><span class="p">(</span><span class="n">seas</span><span class="p">),</span>
-                <span class="s">&quot;/&quot;</span><span class="p">,</span> <span class="n">rep_code</span><span class="p">,</span> <span class="s">&quot;0&quot;</span><span class="p">,</span> <span class="nb">str</span><span class="p">(</span><span class="n">gt</span><span class="p">),</span> <span class="p">(</span><span class="s">&quot;</span><span class="si">%04i</span><span class="s">&quot;</span> <span class="o">%</span> <span class="p">(</span><span class="n">num</span><span class="p">)),</span> <span class="s">&quot;.HTM&quot;</span> <span class="p">]</span>
-        <span class="n">url</span> <span class="o">=</span> <span class="s">&#39;&#39;</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="n">url</span><span class="p">)</span>
-        
+        <span class="n">url</span> <span class="o">=</span> <span class="p">[</span> <span class="bp">self</span><span class="o">.</span><span class="n">__domain</span><span class="p">,</span> <span class="s2">&quot;scores/htmlreports/&quot;</span><span class="p">,</span> <span class="nb">str</span><span class="p">(</span><span class="n">seas</span><span class="o">-</span><span class="mi">1</span><span class="p">),</span> <span class="nb">str</span><span class="p">(</span><span class="n">seas</span><span class="p">),</span>
+                <span class="s2">&quot;/&quot;</span><span class="p">,</span> <span class="n">rep_code</span><span class="p">,</span> <span class="s2">&quot;0&quot;</span><span class="p">,</span> <span class="nb">str</span><span class="p">(</span><span class="n">gt</span><span class="p">),</span> <span class="p">(</span><span class="s2">&quot;</span><span class="si">%04i</span><span class="s2">&quot;</span> <span class="o">%</span> <span class="p">(</span><span class="n">num</span><span class="p">)),</span> <span class="s2">&quot;.HTM&quot;</span> <span class="p">]</span>
+        <span class="n">url</span> <span class="o">=</span> <span class="s1">&#39;&#39;</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="n">url</span><span class="p">)</span>
+
         <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">__open</span><span class="p">(</span><span class="n">url</span><span class="p">)</span>
-    
-    <span class="k">def</span> <span class="nf">game_roster</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">game_key</span><span class="p">):</span>
-<div class="viewcode-block" id="NHLCn.game_roster"><a class="viewcode-back" href="../../../nhlscrapi.scrapr.html#nhlscrapi.scrapr.nhlreq.NHLCn.game_roster">[docs]</a>        <span class="sd">&quot;&quot;&quot;</span>
+
+    <span class="k">def</span> <span class="nf">__json_feed</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">game_key</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;Retrieves the NHL json reports for the specified game and report code - Currently only Play-by-play is</span>
+<span class="sd">        available&quot;&quot;&quot;</span>
+        <span class="n">seas</span><span class="p">,</span> <span class="n">gt</span><span class="p">,</span> <span class="n">num</span> <span class="o">=</span> <span class="n">game_key</span><span class="o">.</span><span class="n">to_tuple</span><span class="p">()</span>
+
+        <span class="c1"># E.g. http://live.nhl.com/GameData/20132014/2013021226/PlayByPlay.json</span>
+        <span class="c1"># url = [ self.__old_json_domain, &quot;GameData/&quot;, str(seas-1), str(seas),</span>
+        <span class="c1">#        &quot;/&quot;, str(seas-1), &quot;0&quot;, str(gt), (&quot;%04i&quot; % (num)), &quot;/&quot;, &quot;PlayByPlay&quot;, &quot;.json&quot; ]</span>
+
+        <span class="c1"># E.g. http://statsapi.web.nhl.com/api/v1/game/2013021226/feed/live</span>
+        <span class="c1"># This source is more informative (includes blocks and faceoffs, for example)</span>
+        <span class="n">url</span> <span class="o">=</span> <span class="p">[</span> <span class="bp">self</span><span class="o">.</span><span class="n">__new_json_domain</span><span class="p">,</span> <span class="s2">&quot;/api/v1/game/&quot;</span><span class="p">,</span> <span class="nb">str</span><span class="p">(</span><span class="n">seas</span><span class="o">-</span><span class="mi">1</span><span class="p">),</span> <span class="s2">&quot;0&quot;</span><span class="p">,</span> <span class="nb">str</span><span class="p">(</span><span class="n">gt</span><span class="p">),</span> <span class="p">(</span><span class="s2">&quot;</span><span class="si">%04i</span><span class="s2">&quot;</span> <span class="o">%</span> <span class="p">(</span><span class="n">num</span><span class="p">)),</span> <span class="s2">&quot;/feed/live&quot;</span> <span class="p">]</span>
+        <span class="n">url</span> <span class="o">=</span> <span class="s1">&#39;&#39;</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="n">url</span><span class="p">)</span>
+
+        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">__open</span><span class="p">(</span><span class="n">url</span><span class="p">,</span> <span class="n">text_type</span><span class="o">=</span><span class="s1">&#39;JSON&#39;</span><span class="p">)</span>
+
+
+<div class="viewcode-block" id="NHLCn.game_roster"><a class="viewcode-back" href="../../../nhlscrapi.scrapr.html#nhlscrapi.scrapr.nhlreq.NHLCn.game_roster">[docs]</a>    <span class="k">def</span> <span class="nf">game_roster</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">game_key</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">        :returns: raw HTML for game rosters (RO)</span>
 <span class="sd">        :rtype: string</span>
 <span class="sd">        &quot;&quot;&quot;</span>
-        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">__html_rep</span><span class="p">(</span><span class="n">game_key</span><span class="p">,</span> <span class="s">&#39;RO&#39;</span><span class="p">)</span>
-        
-    <span class="k">def</span> <span class="nf">rtss</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">game_key</span><span class="p">):</span></div>
-<div class="viewcode-block" id="NHLCn.rtss"><a class="viewcode-back" href="../../../nhlscrapi.scrapr.html#nhlscrapi.scrapr.nhlreq.NHLCn.rtss">[docs]</a>        <span class="sd">&quot;&quot;&quot;</span>
+        <span class="k">return</span> <span class="n">DataContainer</span><span class="p">(</span><span class="n">html</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">__html_rep</span><span class="p">(</span><span class="n">game_key</span><span class="p">,</span> <span class="s1">&#39;RO&#39;</span><span class="p">))</span></div>
+
+<div class="viewcode-block" id="NHLCn.rtss"><a class="viewcode-back" href="../../../nhlscrapi.scrapr.html#nhlscrapi.scrapr.nhlreq.NHLCn.rtss">[docs]</a>    <span class="k">def</span> <span class="nf">rtss</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">game_key</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">        :returns: raw HTML for RTSS play by play (PL)</span>
 <span class="sd">        :rtype: string</span>
 <span class="sd">        &quot;&quot;&quot;</span>
-        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">__html_rep</span><span class="p">(</span><span class="n">game_key</span><span class="p">,</span> <span class="s">&#39;PL&#39;</span><span class="p">)</span>
-        
-    <span class="k">def</span> <span class="nf">home_toi</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">game_key</span><span class="p">):</span></div>
-<div class="viewcode-block" id="NHLCn.home_toi"><a class="viewcode-back" href="../../../nhlscrapi.scrapr.html#nhlscrapi.scrapr.nhlreq.NHLCn.home_toi">[docs]</a>        <span class="sd">&quot;&quot;&quot;</span>
+        <span class="k">return</span> <span class="n">DataContainer</span><span class="p">(</span><span class="n">html</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">__html_rep</span><span class="p">(</span><span class="n">game_key</span><span class="p">,</span> <span class="s1">&#39;PL&#39;</span><span class="p">),</span>
+                <span class="n">json</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">__json_feed</span><span class="p">(</span><span class="n">game_key</span><span class="p">))</span></div>
+
+<div class="viewcode-block" id="NHLCn.home_toi"><a class="viewcode-back" href="../../../nhlscrapi.scrapr.html#nhlscrapi.scrapr.nhlreq.NHLCn.home_toi">[docs]</a>    <span class="k">def</span> <span class="nf">home_toi</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">game_key</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">        :returns: raw HTML for home TOI by player (TH)</span>
 <span class="sd">        :rtype: string</span>
 <span class="sd">        &quot;&quot;&quot;</span>
-        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">__html_rep</span><span class="p">(</span><span class="n">game_key</span><span class="p">,</span> <span class="s">&#39;TH&#39;</span><span class="p">)</span>
-        
-    <span class="k">def</span> <span class="nf">away_toi</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">game_key</span><span class="p">):</span></div>
-<div class="viewcode-block" id="NHLCn.away_toi"><a class="viewcode-back" href="../../../nhlscrapi.scrapr.html#nhlscrapi.scrapr.nhlreq.NHLCn.away_toi">[docs]</a>        <span class="sd">&quot;&quot;&quot;</span>
+        <span class="k">return</span> <span class="n">DataContainer</span><span class="p">(</span><span class="n">html</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">__html_rep</span><span class="p">(</span><span class="n">game_key</span><span class="p">,</span> <span class="s1">&#39;TN&#39;</span><span class="p">))</span></div>
+
+<div class="viewcode-block" id="NHLCn.away_toi"><a class="viewcode-back" href="../../../nhlscrapi.scrapr.html#nhlscrapi.scrapr.nhlreq.NHLCn.away_toi">[docs]</a>    <span class="k">def</span> <span class="nf">away_toi</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">game_key</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">        :returns: raw HTML for away TOI by player (TV)</span>
 <span class="sd">        :rtype: string</span>
 <span class="sd">        &quot;&quot;&quot;</span>
-        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">__html_rep</span><span class="p">(</span><span class="n">game_key</span><span class="p">,</span> <span class="s">&#39;TV&#39;</span><span class="p">)</span>
-        
-    <span class="k">def</span> <span class="nf">face_offs</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">game_key</span><span class="p">):</span></div>
-<div class="viewcode-block" id="NHLCn.face_offs"><a class="viewcode-back" href="../../../nhlscrapi.scrapr.html#nhlscrapi.scrapr.nhlreq.NHLCn.face_offs">[docs]</a>        <span class="sd">&quot;&quot;&quot;</span>
+        <span class="k">return</span> <span class="n">DataContainer</span><span class="p">(</span><span class="n">html</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">__html_rep</span><span class="p">(</span><span class="n">game_key</span><span class="p">,</span> <span class="s1">&#39;TV&#39;</span><span class="p">))</span></div>
+
+<div class="viewcode-block" id="NHLCn.face_offs"><a class="viewcode-back" href="../../../nhlscrapi.scrapr.html#nhlscrapi.scrapr.nhlreq.NHLCn.face_offs">[docs]</a>    <span class="k">def</span> <span class="nf">face_offs</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">game_key</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">        :returns: raw HTML for face off comparisons (FC)</span>
 <span class="sd">        :rtype: string</span>
 <span class="sd">        &quot;&quot;&quot;</span>
-        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">__html_rep</span><span class="p">(</span><span class="n">game_key</span><span class="p">,</span> <span class="s">&#39;FC&#39;</span><span class="p">)</span>
-        
-    <span class="k">def</span> <span class="nf">shootout</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">game_key</span><span class="p">):</span></div>
-<div class="viewcode-block" id="NHLCn.shootout"><a class="viewcode-back" href="../../../nhlscrapi.scrapr.html#nhlscrapi.scrapr.nhlreq.NHLCn.shootout">[docs]</a>        <span class="sd">&quot;&quot;&quot;</span>
+        <span class="k">return</span> <span class="n">DataContainer</span><span class="p">(</span><span class="n">html</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">__html_rep</span><span class="p">(</span><span class="n">game_key</span><span class="p">,</span> <span class="s1">&#39;FC&#39;</span><span class="p">))</span></div>
+
+<div class="viewcode-block" id="NHLCn.shootout"><a class="viewcode-back" href="../../../nhlscrapi.scrapr.html#nhlscrapi.scrapr.nhlreq.NHLCn.shootout">[docs]</a>    <span class="k">def</span> <span class="nf">shootout</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">game_key</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">        :returns: raw HTML for the game&#39;s shootout (SO)</span>
 <span class="sd">        :rtype: string</span>
 <span class="sd">        &quot;&quot;&quot;</span>
-        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">__html_rep</span><span class="p">(</span><span class="n">game_key</span><span class="p">,</span> <span class="s">&#39;SO&#39;</span><span class="p">)</span>
-        
-    <span class="k">def</span> <span class="nf">game_summary</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">game_key</span><span class="p">):</span></div>
-<div class="viewcode-block" id="NHLCn.game_summary"><a class="viewcode-back" href="../../../nhlscrapi.scrapr.html#nhlscrapi.scrapr.nhlreq.NHLCn.game_summary">[docs]</a>        <span class="sd">&quot;&quot;&quot;</span>
+        <span class="k">return</span> <span class="n">DataContainer</span><span class="p">(</span><span class="n">html</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">__html_rep</span><span class="p">(</span><span class="n">game_key</span><span class="p">,</span> <span class="s1">&#39;SO&#39;</span><span class="p">))</span></div>
+
+<div class="viewcode-block" id="NHLCn.game_summary"><a class="viewcode-back" href="../../../nhlscrapi.scrapr.html#nhlscrapi.scrapr.nhlreq.NHLCn.game_summary">[docs]</a>    <span class="k">def</span> <span class="nf">game_summary</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">game_key</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">        :returns: raw HTML for game summary report (GS)</span>
 <span class="sd">        :rtype: string</span>
 <span class="sd">        &quot;&quot;&quot;</span>
-        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">__html_rep</span><span class="p">(</span><span class="n">game_key</span><span class="p">,</span> <span class="s">&#39;GS&#39;</span><span class="p">)</span>
-        
-    <span class="k">def</span> <span class="nf">event_summary</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">game_key</span><span class="p">):</span></div>
-<div class="viewcode-block" id="NHLCn.event_summary"><a class="viewcode-back" href="../../../nhlscrapi.scrapr.html#nhlscrapi.scrapr.nhlreq.NHLCn.event_summary">[docs]</a>        <span class="sd">&quot;&quot;&quot;</span>
+        <span class="k">return</span> <span class="n">DataContainer</span><span class="p">(</span><span class="n">html</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">__html_rep</span><span class="p">(</span><span class="n">game_key</span><span class="p">,</span> <span class="s1">&#39;GS&#39;</span><span class="p">))</span></div>
+
+<div class="viewcode-block" id="NHLCn.event_summary"><a class="viewcode-back" href="../../../nhlscrapi.scrapr.html#nhlscrapi.scrapr.nhlreq.NHLCn.event_summary">[docs]</a>    <span class="k">def</span> <span class="nf">event_summary</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">game_key</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">        :returns: raw HTML for the event summary report (ES)</span>
 <span class="sd">        :rtype: string</span>
 <span class="sd">        &quot;&quot;&quot;</span>
-        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">__html_rep</span><span class="p">(</span><span class="n">game_key</span><span class="p">,</span> <span class="s">&#39;ES&#39;</span><span class="p">)</span>
-        
-    <span class="k">def</span> <span class="nf">shot_summary</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">game_key</span><span class="p">):</span></div>
-<div class="viewcode-block" id="NHLCn.shot_summary"><a class="viewcode-back" href="../../../nhlscrapi.scrapr.html#nhlscrapi.scrapr.nhlreq.NHLCn.shot_summary">[docs]</a>        <span class="sd">&quot;&quot;&quot;</span>
+        <span class="k">return</span> <span class="n">DataContainer</span><span class="p">(</span><span class="n">html</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">__html_rep</span><span class="p">(</span><span class="n">game_key</span><span class="p">,</span> <span class="s1">&#39;ES&#39;</span><span class="p">))</span></div>
+
+<div class="viewcode-block" id="NHLCn.shot_summary"><a class="viewcode-back" href="../../../nhlscrapi.scrapr.html#nhlscrapi.scrapr.nhlreq.NHLCn.shot_summary">[docs]</a>    <span class="k">def</span> <span class="nf">shot_summary</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">game_key</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">        :returns: raw HTML for the shot summary report (SS)</span>
 <span class="sd">        :rtype: string</span>
 <span class="sd">        &quot;&quot;&quot;</span>
-        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">__html_rep</span><span class="p">(</span><span class="n">game_key</span><span class="p">,</span> <span class="s">&#39;SS&#39;</span><span class="p">)</span>
-        
-    <span class="k">def</span> <span class="nf">__open</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">url</span><span class="p">):</span></div>
+        <span class="k">return</span> <span class="n">DataContainer</span><span class="p">(</span><span class="n">html</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">__html_rep</span><span class="p">(</span><span class="n">game_key</span><span class="p">,</span> <span class="s1">&#39;SS&#39;</span><span class="p">))</span></div>
+
+    <span class="k">def</span> <span class="nf">__open</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">url</span><span class="p">,</span> <span class="n">text_type</span><span class="o">=</span><span class="s1">&#39;HTML&#39;</span><span class="p">):</span>
         <span class="n">req</span> <span class="o">=</span> <span class="bp">None</span>
         <span class="k">try</span><span class="p">:</span>
             <span class="n">req</span> <span class="o">=</span> <span class="n">requests</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="n">url</span><span class="p">,</span> <span class="n">headers</span><span class="o">=</span><span class="p">{</span>
-                <span class="s">&#39;User-Agent&#39;</span><span class="p">:</span> <span class="s">&#39;Mozilla/5.0 (X11; Linux x86_64) AppleWebKit/537.11 (KHTML, like Gecko) Chrome/23.0.1271.64 Safari/537.11&#39;</span><span class="p">,</span>
-                <span class="s">&#39;Accept&#39;</span><span class="p">:</span> <span class="s">&#39;text/html,application/xhtml+xml,application/xml;q=0.9,*/*;q=0.8&#39;</span><span class="p">,</span>
-                <span class="s">&#39;Accept-Charset&#39;</span><span class="p">:</span> <span class="s">&#39;ISO-8859-1,utf-8;q=0.7,*;q=0.3&#39;</span><span class="p">,</span>
-                <span class="s">&#39;Accept-Encoding&#39;</span><span class="p">:</span> <span class="s">&#39;none&#39;</span><span class="p">,</span>
-                <span class="s">&#39;Accept-Language&#39;</span><span class="p">:</span> <span class="s">&#39;en-US,en;q=0.8&#39;</span><span class="p">,</span>
-                <span class="s">&#39;Connection&#39;</span><span class="p">:</span> <span class="s">&#39;keep-alive&#39;</span>
+                <span class="s1">&#39;User-Agent&#39;</span><span class="p">:</span> <span class="s1">&#39;Mozilla/5.0 (X11; Linux x86_64) AppleWebKit/537.11 (KHTML, like Gecko) Chrome/23.0.1271.64 Safari/537.11&#39;</span><span class="p">,</span>
+                <span class="s1">&#39;Accept&#39;</span><span class="p">:</span> <span class="s1">&#39;text/html,application/xhtml+xml,application/xml;q=0.9,*/*;q=0.8&#39;</span><span class="p">,</span>
+                <span class="s1">&#39;Accept-Charset&#39;</span><span class="p">:</span> <span class="s1">&#39;ISO-8859-1,utf-8;q=0.7,*;q=0.3&#39;</span><span class="p">,</span>
+                <span class="s1">&#39;Accept-Encoding&#39;</span><span class="p">:</span> <span class="s1">&#39;none&#39;</span><span class="p">,</span>
+                <span class="s1">&#39;Accept-Language&#39;</span><span class="p">:</span> <span class="s1">&#39;en-US,en;q=0.8&#39;</span><span class="p">,</span>
+                <span class="s1">&#39;Connection&#39;</span><span class="p">:</span> <span class="s1">&#39;keep-alive&#39;</span>
             <span class="p">})</span>
-            <span class="bp">self</span><span class="o">.</span><span class="n">html_src</span> <span class="o">=</span> <span class="n">req</span><span class="o">.</span><span class="n">text</span>
+            <span class="k">if</span> <span class="n">text_type</span> <span class="o">==</span> <span class="s1">&#39;HTML&#39;</span><span class="p">:</span>
+                <span class="bp">self</span><span class="o">.</span><span class="n">html_src</span> <span class="o">=</span> <span class="n">req</span><span class="o">.</span><span class="n">text</span>
+            <span class="k">elif</span> <span class="n">text_type</span> <span class="o">==</span> <span class="s1">&#39;JSON&#39;</span><span class="p">:</span>
+                <span class="bp">self</span><span class="o">.</span><span class="n">json_src</span> <span class="o">=</span> <span class="n">req</span><span class="o">.</span><span class="n">text</span>
+            <span class="k">else</span><span class="p">:</span>
+                <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span><span class="s2">&quot;Unsupported content type: </span><span class="si">%s</span><span class="s2">&quot;</span> <span class="o">+</span> <span class="nb">str</span><span class="p">(</span><span class="n">text_type</span><span class="p">))</span>
         <span class="k">except</span> <span class="ne">Exception</span> <span class="k">as</span> <span class="n">e</span><span class="p">:</span>
             <span class="bp">self</span><span class="o">.</span><span class="n">req_err</span> <span class="o">=</span> <span class="n">e</span>
-                
-        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">html_src</span>
-</pre></div></div>
+
+        <span class="k">if</span> <span class="n">text_type</span> <span class="o">==</span> <span class="s1">&#39;HTML&#39;</span><span class="p">:</span>
+            <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">html_src</span>
+        <span class="k">elif</span> <span class="n">text_type</span> <span class="o">==</span> <span class="s1">&#39;JSON&#39;</span><span class="p">:</span>
+            <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">json_src</span></div>
+</pre></div>
 
           </div>
         </div>
@@ -177,8 +210,8 @@
       &copy;2015, Author.
       
       |
-      Powered by <a href="http://sphinx-doc.org/">Sphinx 1.3.1</a>
-      &amp; <a href="https://github.com/bitprophet/alabaster">Alabaster 0.7.6</a>
+      Powered by <a href="http://sphinx-doc.org/">Sphinx 1.3.5</a>
+      &amp; <a href="https://github.com/bitprophet/alabaster">Alabaster 0.7.7</a>
       
     </div>
 

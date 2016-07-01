@@ -27,7 +27,7 @@
     <link rel="next" title="nhlscrapi package" href="nhlscrapi.html" />
    
   
-  <meta name="viewport" content="width=device-width, initial-scale=0.9, maximum-scale=0.9">
+  <meta name="viewport" content="width=device-width, initial-scale=0.9, maximum-scale=0.9" />
 
   </head>
   <body role="document">  
@@ -55,7 +55,7 @@
 <div class="section" id="installation">
 <h2>Installation<a class="headerlink" href="#installation" title="Permalink to this headline">¶</a></h2>
 <p>Getting started is as easy as:</p>
-<div class="highlight-python"><div class="highlight"><pre>pip install nhlscrapi
+<div class="highlight-python"><div class="highlight"><pre><span></span>pip install nhlscrapi
 </pre></div>
 </div>
 <p>For more information on the setup, see the <a class="reference external" href="https://pypi.python.org/pypi/nhlscrapi/">PyPi: nhlscrapi</a>. The documentation for the package can be found at <a class="reference external" href="http://pythonhosted.org/nhlscrapi/">nhlscrapi: NHL Scraper API</a>.</p>
@@ -63,48 +63,48 @@
 <div class="section" id="usage-example">
 <h2>Usage Example<a class="headerlink" href="#usage-example" title="Permalink to this headline">¶</a></h2>
 <p>Scrape data for game 1226 of 2014, Ottawa vs Pittsburgh.</p>
-<div class="highlight-python"><div class="highlight"><pre><span class="kn">from</span> <span class="nn">nhlscrapi.games.game</span> <span class="kn">import</span> <span class="n">Game</span><span class="p">,</span> <span class="n">GameKey</span><span class="p">,</span> <span class="n">GameType</span>
+<div class="highlight-python"><div class="highlight"><pre><span></span><span class="kn">from</span> <span class="nn">nhlscrapi.games.game</span> <span class="kn">import</span> <span class="n">Game</span><span class="p">,</span> <span class="n">GameKey</span><span class="p">,</span> <span class="n">GameType</span>
 <span class="kn">from</span> <span class="nn">nhlscrapi.games.cumstats</span> <span class="kn">import</span> <span class="n">Score</span><span class="p">,</span> <span class="n">ShotCt</span><span class="p">,</span> <span class="n">Corsi</span><span class="p">,</span> <span class="n">Fenwick</span>
 
-<span class="n">season</span> <span class="o">=</span> <span class="mi">2014</span>                                    <span class="c"># 2013-2014 season</span>
-<span class="n">game_num</span> <span class="o">=</span> <span class="mi">1226</span>                                  <span class="c">#</span>
-<span class="n">game_type</span> <span class="o">=</span> <span class="n">GameType</span><span class="o">.</span><span class="n">Regular</span>                     <span class="c"># regular season game</span>
+<span class="n">season</span> <span class="o">=</span> <span class="mi">2014</span>                                    <span class="c1"># 2013-2014 season</span>
+<span class="n">game_num</span> <span class="o">=</span> <span class="mi">1226</span>                                  <span class="c1">#</span>
+<span class="n">game_type</span> <span class="o">=</span> <span class="n">GameType</span><span class="o">.</span><span class="n">Regular</span>                     <span class="c1"># regular season game</span>
 <span class="n">game_key</span> <span class="o">=</span> <span class="n">GameKey</span><span class="p">(</span><span class="n">season</span><span class="p">,</span> <span class="n">game_type</span><span class="p">,</span> <span class="n">game_num</span><span class="p">)</span>
 
-<span class="c"># define stat types that will be counted as the plays are parsed</span>
+<span class="c1"># define stat types that will be counted as the plays are parsed</span>
 <span class="n">cum_stats</span> <span class="o">=</span> <span class="p">{</span>
-  <span class="s">&#39;Score&#39;</span><span class="p">:</span> <span class="n">Score</span><span class="p">(),</span>
-  <span class="s">&#39;Shots&#39;</span><span class="p">:</span> <span class="n">ShotCt</span><span class="p">(),</span>
-  <span class="s">&#39;Corsi&#39;</span><span class="p">:</span> <span class="n">Corsi</span><span class="p">(),</span>
-  <span class="s">&#39;Fenwick&#39;</span><span class="p">:</span> <span class="n">Fenwick</span><span class="p">()</span>
+  <span class="s1">&#39;Score&#39;</span><span class="p">:</span> <span class="n">Score</span><span class="p">(),</span>
+  <span class="s1">&#39;Shots&#39;</span><span class="p">:</span> <span class="n">ShotCt</span><span class="p">(),</span>
+  <span class="s1">&#39;Corsi&#39;</span><span class="p">:</span> <span class="n">Corsi</span><span class="p">(),</span>
+  <span class="s1">&#39;Fenwick&#39;</span><span class="p">:</span> <span class="n">Fenwick</span><span class="p">()</span>
 <span class="p">}</span>
 <span class="n">game</span> <span class="o">=</span> <span class="n">Game</span><span class="p">(</span><span class="n">game_key</span><span class="p">,</span> <span class="n">cum_stats</span><span class="o">=</span><span class="n">cum_stats</span><span class="p">)</span>
 
-<span class="c"># also http requests and processing are lazy</span>
-<span class="c"># accumulators require play by play info so they parse the RTSS PBP</span>
-<span class="k">print</span><span class="p">(</span><span class="s">&#39;Final         : {}&#39;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="n">game</span><span class="o">.</span><span class="n">cum_stats</span><span class="p">[</span><span class="s">&#39;Score&#39;</span><span class="p">]</span><span class="o">.</span><span class="n">total</span><span class="p">))</span>
-<span class="k">print</span><span class="p">(</span><span class="s">&#39;Shootout      : {}&#39;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="n">game</span><span class="o">.</span><span class="n">cum_stats</span><span class="p">[</span><span class="s">&#39;Score&#39;</span><span class="p">]</span><span class="o">.</span><span class="n">shootout</span><span class="o">.</span><span class="n">total</span><span class="p">))</span>
-<span class="k">print</span><span class="p">(</span><span class="s">&#39;Shots         : {}&#39;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="n">game</span><span class="o">.</span><span class="n">cum_stats</span><span class="p">[</span><span class="s">&#39;Shots&#39;</span><span class="p">]</span><span class="o">.</span><span class="n">total</span><span class="p">))</span>
-<span class="k">print</span><span class="p">(</span><span class="s">&#39;EV Shot Atts  : {}&#39;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="n">game</span><span class="o">.</span><span class="n">cum_stats</span><span class="p">[</span><span class="s">&#39;Corsi&#39;</span><span class="p">]</span><span class="o">.</span><span class="n">total</span><span class="p">))</span>
-<span class="k">print</span><span class="p">(</span><span class="s">&#39;Corsi         : {}&#39;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="n">game</span><span class="o">.</span><span class="n">cum_stats</span><span class="p">[</span><span class="s">&#39;Corsi&#39;</span><span class="p">]</span><span class="o">.</span><span class="n">share</span><span class="p">()))</span>
-<span class="k">print</span><span class="p">(</span><span class="s">&#39;FW Shot Atts  : {}&#39;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="n">game</span><span class="o">.</span><span class="n">cum_stats</span><span class="p">[</span><span class="s">&#39;Fenwick&#39;</span><span class="p">]</span><span class="o">.</span><span class="n">total</span><span class="p">))</span>
-<span class="k">print</span><span class="p">(</span><span class="s">&#39;Fenwick       : {}&#39;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="n">game</span><span class="o">.</span><span class="n">cum_stats</span><span class="p">[</span><span class="s">&#39;Fenwick&#39;</span><span class="p">]</span><span class="o">.</span><span class="n">share</span><span class="p">()))</span>
+<span class="c1"># also http requests and processing are lazy</span>
+<span class="c1"># accumulators require play by play info so they parse the RTSS PBP</span>
+<span class="k">print</span><span class="p">(</span><span class="s1">&#39;Final         : {}&#39;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="n">game</span><span class="o">.</span><span class="n">cum_stats</span><span class="p">[</span><span class="s1">&#39;Score&#39;</span><span class="p">]</span><span class="o">.</span><span class="n">total</span><span class="p">))</span>
+<span class="k">print</span><span class="p">(</span><span class="s1">&#39;Shootout      : {}&#39;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="n">game</span><span class="o">.</span><span class="n">cum_stats</span><span class="p">[</span><span class="s1">&#39;Score&#39;</span><span class="p">]</span><span class="o">.</span><span class="n">shootout</span><span class="o">.</span><span class="n">total</span><span class="p">))</span>
+<span class="k">print</span><span class="p">(</span><span class="s1">&#39;Shots         : {}&#39;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="n">game</span><span class="o">.</span><span class="n">cum_stats</span><span class="p">[</span><span class="s1">&#39;Shots&#39;</span><span class="p">]</span><span class="o">.</span><span class="n">total</span><span class="p">))</span>
+<span class="k">print</span><span class="p">(</span><span class="s1">&#39;EV Shot Atts  : {}&#39;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="n">game</span><span class="o">.</span><span class="n">cum_stats</span><span class="p">[</span><span class="s1">&#39;Corsi&#39;</span><span class="p">]</span><span class="o">.</span><span class="n">total</span><span class="p">))</span>
+<span class="k">print</span><span class="p">(</span><span class="s1">&#39;Corsi         : {}&#39;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="n">game</span><span class="o">.</span><span class="n">cum_stats</span><span class="p">[</span><span class="s1">&#39;Corsi&#39;</span><span class="p">]</span><span class="o">.</span><span class="n">share</span><span class="p">()))</span>
+<span class="k">print</span><span class="p">(</span><span class="s1">&#39;FW Shot Atts  : {}&#39;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="n">game</span><span class="o">.</span><span class="n">cum_stats</span><span class="p">[</span><span class="s1">&#39;Fenwick&#39;</span><span class="p">]</span><span class="o">.</span><span class="n">total</span><span class="p">))</span>
+<span class="k">print</span><span class="p">(</span><span class="s1">&#39;Fenwick       : {}&#39;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="n">game</span><span class="o">.</span><span class="n">cum_stats</span><span class="p">[</span><span class="s1">&#39;Fenwick&#39;</span><span class="p">]</span><span class="o">.</span><span class="n">share</span><span class="p">()))</span>
 
-<span class="c"># http req for roster report</span>
-<span class="c"># only parses the sections related to officials and coaches</span>
-<span class="k">print</span><span class="p">(</span><span class="s">&#39;</span><span class="se">\n</span><span class="s">Refs          : {}&#39;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="n">game</span><span class="o">.</span><span class="n">refs</span><span class="p">))</span>
-<span class="k">print</span><span class="p">(</span><span class="s">&#39;Linesman      : {}&#39;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="n">game</span><span class="o">.</span><span class="n">linesman</span><span class="p">))</span>
-<span class="k">print</span><span class="p">(</span><span class="s">&#39;Coaches&#39;</span><span class="p">)</span>
-<span class="k">print</span><span class="p">(</span><span class="s">&#39;  Home        : {}&#39;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="n">game</span><span class="o">.</span><span class="n">home_coach</span><span class="p">))</span>
-<span class="k">print</span><span class="p">(</span><span class="s">&#39;  Away        : {}&#39;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="n">game</span><span class="o">.</span><span class="n">away_coach</span><span class="p">))</span>
+<span class="c1"># http req for roster report</span>
+<span class="c1"># only parses the sections related to officials and coaches</span>
+<span class="k">print</span><span class="p">(</span><span class="s1">&#39;</span><span class="se">\n</span><span class="s1">Refs          : {}&#39;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="n">game</span><span class="o">.</span><span class="n">refs</span><span class="p">))</span>
+<span class="k">print</span><span class="p">(</span><span class="s1">&#39;Linesman      : {}&#39;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="n">game</span><span class="o">.</span><span class="n">linesman</span><span class="p">))</span>
+<span class="k">print</span><span class="p">(</span><span class="s1">&#39;Coaches&#39;</span><span class="p">)</span>
+<span class="k">print</span><span class="p">(</span><span class="s1">&#39;  Home        : {}&#39;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="n">game</span><span class="o">.</span><span class="n">home_coach</span><span class="p">))</span>
+<span class="k">print</span><span class="p">(</span><span class="s1">&#39;  Away        : {}&#39;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="n">game</span><span class="o">.</span><span class="n">away_coach</span><span class="p">))</span>
 
-<span class="c"># scrape all remaining reports</span>
+<span class="c1"># scrape all remaining reports</span>
 <span class="n">game</span><span class="o">.</span><span class="n">load_all</span><span class="p">()</span>
 </pre></div>
 </div>
 </div>
-<div class="section" id="current-release-v0-4-0">
-<h2>Current Release: v0.4.0<a class="headerlink" href="#current-release-v0-4-0" title="Permalink to this headline">¶</a></h2>
+<div class="section" id="current-release-v0-4-4">
+<h2>Current Release: v0.4.4<a class="headerlink" href="#current-release-v0-4-4" title="Permalink to this headline">¶</a></h2>
 <p>This is a pre-release and is not stable and fully fit for production. The first full stable release (v1.0.0) will be made available once the framework for all <a class="reference external" href="http://www.nhl.com/ice/gamestats.htm?fetchKey=20142ALLSATAll&amp;sort=gameDate&amp;viewName=teamRTSSreports">NHL game reports</a> are completed. Currently, Play-by-Play, Home/Away TOI, Roster, Face-off Comparison and Event Summary reports are functional.</p>
 </div>
 <div class="section" id="license">
@@ -137,6 +137,45 @@
 </div>
 <div class="section" id="change-log">
 <h2>Change log<a class="headerlink" href="#change-log" title="Permalink to this headline">¶</a></h2>
+</div>
+<div class="section" id="v0-4-4">
+<h2>v0.4.4<a class="headerlink" href="#v0-4-4" title="Permalink to this headline">¶</a></h2>
+<blockquote>
+<div><ul class="simple">
+<li>Close issue 15 from <code class="docutils literal"><span class="pre">scrapr.rosterrep.parse_rosters()</span></code></li>
+<li>Calling <code class="docutils literal"><span class="pre">max</span></code> on empty key list, used common sense and switched to <code class="docutils literal"><span class="pre">len</span></code></li>
+<li>Stupid indentation issue leading to inclusion of roster table header</li>
+</ul>
+</div></blockquote>
+</div>
+<div class="section" id="v0-4-3">
+<h2>v0.4.3<a class="headerlink" href="#v0-4-3" title="Permalink to this headline">¶</a></h2>
+<blockquote>
+<div><ul class="simple">
+<li>Put some blunt checks in <code class="docutils literal"><span class="pre">scrapr.descparser.py</span></code> for missing info in RTSS reports.</li>
+<li>See Issue 4</li>
+<li>TODO: design a more robust/elegant way of defining data formats and missing data. This works for now.</li>
+</ul>
+</div></blockquote>
+</div>
+<div class="section" id="v0-4-2">
+<h2>v0.4.2<a class="headerlink" href="#v0-4-2" title="Permalink to this headline">¶</a></h2>
+<blockquote>
+<div><ul class="simple">
+<li>Let <code class="docutils literal"><span class="pre">scrapr.rtss.PlayParser</span></code> track game type and loosen skater count to address shootout parsing discussed in <a class="reference external" href="https://github.com/robhowley/nhlscrapi/issues/2">Issue #2</a></li>
+<li>Update constants ... will find a better way to handle checks.</li>
+<li>see Issues 2, and 3</li>
+</ul>
+</div></blockquote>
+</div>
+<div class="section" id="v0-4-1">
+<h2>v0.4.1<a class="headerlink" href="#v0-4-1" title="Permalink to this headline">¶</a></h2>
+<blockquote>
+<div><ul class="simple">
+<li>Ugly hack in <code class="docutils literal"><span class="pre">scrapr.toirep.TOIRepBase</span></code> to account for missing data in the report discussed in <a class="reference external" href="https://github.com/robhowley/nhlscrapi/issues/1">Issue #1</a></li>
+<li>TODO: need to add a more robust way to handle broken records gracefully and continues parsing the remainder of the document.</li>
+</ul>
+</div></blockquote>
 </div>
 <div class="section" id="v0-4-0">
 <h2>v0.4.0<a class="headerlink" href="#v0-4-0" title="Permalink to this headline">¶</a></h2>
@@ -280,10 +319,14 @@
 <li><a class="reference internal" href="#purpose">Purpose</a></li>
 <li><a class="reference internal" href="#installation">Installation</a></li>
 <li><a class="reference internal" href="#usage-example">Usage Example</a></li>
-<li><a class="reference internal" href="#current-release-v0-4-0">Current Release: v0.4.0</a></li>
+<li><a class="reference internal" href="#current-release-v0-4-4">Current Release: v0.4.4</a></li>
 <li><a class="reference internal" href="#license">License</a></li>
 <li><a class="reference internal" href="#contents">Contents</a></li>
 <li><a class="reference internal" href="#change-log">Change log</a></li>
+<li><a class="reference internal" href="#v0-4-4">v0.4.4</a></li>
+<li><a class="reference internal" href="#v0-4-3">v0.4.3</a></li>
+<li><a class="reference internal" href="#v0-4-2">v0.4.2</a></li>
+<li><a class="reference internal" href="#v0-4-1">v0.4.1</a></li>
 <li><a class="reference internal" href="#v0-4-0">v0.4.0</a></li>
 <li><a class="reference internal" href="#v0-3-7">v0.3.7</a></li>
 <li><a class="reference internal" href="#v0-3-6">v0.3.6</a></li>
@@ -333,8 +376,8 @@
       &copy;2015, Author.
       
       |
-      Powered by <a href="http://sphinx-doc.org/">Sphinx 1.3.1</a>
-      &amp; <a href="https://github.com/bitprophet/alabaster">Alabaster 0.7.6</a>
+      Powered by <a href="http://sphinx-doc.org/">Sphinx 1.3.5</a>
+      &amp; <a href="https://github.com/bitprophet/alabaster">Alabaster 0.7.7</a>
       
       |
       <a href="_sources/index.txt"

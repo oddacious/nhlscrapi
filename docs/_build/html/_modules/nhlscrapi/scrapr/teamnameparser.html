@@ -27,7 +27,7 @@
     <link rel="up" title="Module code" href="../../index.html" />
    
   
-  <meta name="viewport" content="width=device-width, initial-scale=0.9, maximum-scale=0.9">
+  <meta name="viewport" content="width=device-width, initial-scale=0.9, maximum-scale=0.9" />
 
   </head>
   <body role="document">  
@@ -38,41 +38,41 @@
           <div class="body" role="main">
             
   <h1>Source code for nhlscrapi.scrapr.teamnameparser</h1><div class="highlight"><pre>
+<span></span>
 <span class="kn">from</span> <span class="nn">nhlscrapi.constants</span> <span class="kn">import</span> <span class="n">TEAMS_BY_ABBR</span> <span class="k">as</span> <span class="n">ABB</span>
 
 <span class="n">__abbr_alts</span> <span class="o">=</span> <span class="p">{</span>
-  <span class="s">&#39;LAK&#39;</span><span class="p">:</span> <span class="s">&#39;LA&#39;</span>
+  <span class="s1">&#39;LAK&#39;</span><span class="p">:</span> <span class="s1">&#39;LA&#39;</span>
 <span class="p">}</span>
 
-<span class="k">def</span> <span class="nf">team_abbr_parser</span><span class="p">(</span><span class="n">abr</span><span class="p">):</span>
-<div class="viewcode-block" id="team_abbr_parser"><a class="viewcode-back" href="../../../nhlscrapi.scrapr.html#nhlscrapi.scrapr.teamnameparser.team_abbr_parser">[docs]</a>  <span class="n">abr</span> <span class="o">=</span> <span class="n">abr</span><span class="o">.</span><span class="n">replace</span><span class="p">(</span><span class="s">&#39;.&#39;</span><span class="p">,</span><span class="s">&#39;&#39;</span><span class="p">)</span>
+<div class="viewcode-block" id="team_abbr_parser"><a class="viewcode-back" href="../../../nhlscrapi.scrapr.html#nhlscrapi.scrapr.teamnameparser.team_abbr_parser">[docs]</a><span class="k">def</span> <span class="nf">team_abbr_parser</span><span class="p">(</span><span class="n">abr</span><span class="p">):</span>
+  <span class="n">abr</span> <span class="o">=</span> <span class="n">abr</span><span class="o">.</span><span class="n">replace</span><span class="p">(</span><span class="s1">&#39;.&#39;</span><span class="p">,</span><span class="s1">&#39;&#39;</span><span class="p">)</span>
   
-  <span class="c"># keep abr if already in good shape</span>
+  <span class="c1"># keep abr if already in good shape</span>
   <span class="k">if</span> <span class="n">abr</span> <span class="ow">in</span> <span class="n">ABB</span><span class="p">:</span>
     <span class="k">return</span> <span class="n">abr</span>
     
   <span class="k">if</span> <span class="n">abr</span> <span class="ow">in</span> <span class="n">__abbr_alts</span><span class="p">:</span>
     <span class="k">return</span> <span class="n">__abbr_alts</span><span class="p">[</span><span class="n">abr</span><span class="p">]</span>
     
-  <span class="c">#print &#39;UNKNOWN ABBREVIATION: %s&#39; % abr</span>
-  <span class="k">return</span> <span class="n">abr</span>
+  <span class="c1">#print &#39;UNKNOWN ABBREVIATION: %s&#39; % abr</span>
+  <span class="k">return</span> <span class="n">abr</span></div>
 
 
-<span class="k">def</span> <span class="nf">team_name_parser</span><span class="p">(</span><span class="n">name</span><span class="p">):</span></div>
-<div class="viewcode-block" id="team_name_parser"><a class="viewcode-back" href="../../../nhlscrapi.scrapr.html#nhlscrapi.scrapr.teamnameparser.team_name_parser">[docs]</a>  
-  <span class="c"># give proper capitalization</span>
-  <span class="n">ns</span> <span class="o">=</span> <span class="s">&#39; &#39;</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="n">s</span><span class="p">[:</span><span class="mi">1</span><span class="p">]</span><span class="o">.</span><span class="n">upper</span><span class="p">()</span> <span class="o">+</span> <span class="n">s</span><span class="p">[</span><span class="mi">1</span><span class="p">:]</span> <span class="k">for</span> <span class="n">s</span> <span class="ow">in</span> <span class="n">name</span><span class="o">.</span><span class="n">lower</span><span class="p">()</span><span class="o">.</span><span class="n">split</span><span class="p">(</span><span class="s">&#39; &#39;</span><span class="p">))</span>
+<div class="viewcode-block" id="team_name_parser"><a class="viewcode-back" href="../../../nhlscrapi.scrapr.html#nhlscrapi.scrapr.teamnameparser.team_name_parser">[docs]</a><span class="k">def</span> <span class="nf">team_name_parser</span><span class="p">(</span><span class="n">name</span><span class="p">):</span>
+  <span class="c1"># give proper capitalization, translate to expected team name</span>
+  <span class="c1"># WASHINGTON CAPITALS -&gt; Washington Capitals</span>
+  <span class="c1"># ST. LOUIS BLUES -&gt; St Louis Blues</span>
+  <span class="n">ns</span> <span class="o">=</span> <span class="s1">&#39; &#39;</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="n">s</span><span class="p">[:</span><span class="mi">1</span><span class="p">]</span><span class="o">.</span><span class="n">upper</span><span class="p">()</span> <span class="o">+</span> <span class="n">s</span><span class="p">[</span><span class="mi">1</span><span class="p">:]</span> <span class="k">for</span> <span class="n">s</span> <span class="ow">in</span> <span class="n">name</span><span class="o">.</span><span class="n">lower</span><span class="p">()</span><span class="o">.</span><span class="n">replace</span><span class="p">(</span><span class="s1">&#39;.&#39;</span><span class="p">,</span><span class="s1">&#39;&#39;</span><span class="p">)</span><span class="o">.</span><span class="n">split</span><span class="p">(</span><span class="s1">&#39; &#39;</span><span class="p">))</span>
   
   <span class="k">try</span><span class="p">:</span>
-    <span class="k">return</span> <span class="n">ABB</span><span class="o">.</span><span class="n">keys</span><span class="p">()[</span><span class="n">ABB</span><span class="o">.</span><span class="n">values</span><span class="p">()</span><span class="o">.</span><span class="n">index</span><span class="p">(</span><span class="n">ns</span><span class="p">)]</span>
+    <span class="k">return</span> <span class="n">ABB</span><span class="o">.</span><span class="n">keys</span><span class="p">()[</span><span class="n">ABB</span><span class="o">.</span><span class="n">values</span><span class="p">()</span><span class="o">.</span><span class="n">index</span><span class="p">(</span><span class="n">ns</span><span class="p">)]</span> <span class="c1">#Reverse lookup, by value.</span>
   <span class="k">except</span><span class="p">:</span>
-    <span class="c">#print &#39;UNKNOWN TEAM NAME: %s&#39; % name</span>
+    <span class="c1">#print &#39;UNKNOWN TEAM NAME: %s&#39; % name</span>
     <span class="k">pass</span>
   
-  <span class="k">return</span> <span class="n">name</span>
-  
-  
-</pre></div></div>
+  <span class="k">return</span> <span class="n">name</span></div>
+</pre></div>
 
           </div>
         </div>
@@ -108,8 +108,8 @@
       &copy;2015, Author.
       
       |
-      Powered by <a href="http://sphinx-doc.org/">Sphinx 1.3.1</a>
-      &amp; <a href="https://github.com/bitprophet/alabaster">Alabaster 0.7.6</a>
+      Powered by <a href="http://sphinx-doc.org/">Sphinx 1.3.5</a>
+      &amp; <a href="https://github.com/bitprophet/alabaster">Alabaster 0.7.7</a>
       
     </div>
 

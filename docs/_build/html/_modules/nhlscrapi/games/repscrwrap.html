@@ -27,7 +27,7 @@
     <link rel="up" title="Module code" href="../../index.html" />
    
   
-  <meta name="viewport" content="width=device-width, initial-scale=0.9, maximum-scale=0.9">
+  <meta name="viewport" content="width=device-width, initial-scale=0.9, maximum-scale=0.9" />
 
   </head>
   <body role="document">  
@@ -38,11 +38,12 @@
           <div class="body" role="main">
             
   <h1>Source code for nhlscrapi.games.repscrwrap</h1><div class="highlight"><pre>
+<span></span>
 <span class="kn">from</span> <span class="nn">functools</span> <span class="kn">import</span> <span class="n">wraps</span>
 <span class="kn">from</span> <span class="nn">abc</span> <span class="kn">import</span> <span class="n">ABCMeta</span><span class="p">,</span> <span class="n">abstractmethod</span>
 
-<span class="k">def</span> <span class="nf">dispatch_loader</span><span class="p">(</span><span class="n">scraper</span><span class="p">,</span> <span class="n">loader_name</span><span class="p">):</span>
-<div class="viewcode-block" id="dispatch_loader"><a class="viewcode-back" href="../../../nhlscrapi.games.html#nhlscrapi.games.repscrwrap.dispatch_loader">[docs]</a>    <span class="sd">&quot;&quot;&quot;</span>
+<div class="viewcode-block" id="dispatch_loader"><a class="viewcode-back" href="../../../nhlscrapi.games.html#nhlscrapi.games.repscrwrap.dispatch_loader">[docs]</a><span class="k">def</span> <span class="nf">dispatch_loader</span><span class="p">(</span><span class="n">scraper</span><span class="p">,</span> <span class="n">loader_name</span><span class="p">):</span>
+    <span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">    Decorator that enforces one time loading for scrapers. The one time loading is applied</span>
 <span class="sd">    to partial loaders, e.g. only parse and load the home team roster once. This is not</span>
 <span class="sd">    meant to be used directly.</span>
@@ -51,11 +52,11 @@
 <span class="sd">    :param loader_name: name of method that does the scraping/parsing</span>
 <span class="sd">    :returns: function wrapper</span>
 <span class="sd">    &quot;&quot;&quot;</span>
-    <span class="n">l</span> <span class="o">=</span> <span class="s">&#39;.&#39;</span><span class="o">.</span><span class="n">join</span><span class="p">([</span><span class="n">scraper</span><span class="p">,</span> <span class="n">loader_name</span><span class="p">])</span>
+    <span class="n">l</span> <span class="o">=</span> <span class="s1">&#39;.&#39;</span><span class="o">.</span><span class="n">join</span><span class="p">([</span><span class="n">scraper</span><span class="p">,</span> <span class="n">loader_name</span><span class="p">])</span>
     <span class="k">def</span> <span class="nf">wrapper</span><span class="p">(</span><span class="n">f</span><span class="p">):</span>
         <span class="nd">@wraps</span><span class="p">(</span><span class="n">f</span><span class="p">)</span>
         <span class="k">def</span> <span class="nf">wrapped</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="o">*</span><span class="n">f_args</span><span class="p">,</span> <span class="o">**</span><span class="n">f_kwargs</span><span class="p">):</span>
-            <span class="k">if</span> <span class="ow">not</span> <span class="nb">hasattr</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="s">&#39;_loaded&#39;</span><span class="p">):</span>
+            <span class="k">if</span> <span class="ow">not</span> <span class="nb">hasattr</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="s1">&#39;_loaded&#39;</span><span class="p">):</span>
                 <span class="bp">self</span><span class="o">.</span><span class="n">_loaded</span> <span class="o">=</span> <span class="p">{</span> <span class="p">}</span>
                 
             <span class="n">already_loaded</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_loaded</span><span class="o">.</span><span class="n">setdefault</span><span class="p">(</span><span class="n">l</span><span class="p">,</span> <span class="bp">False</span><span class="p">)</span>
@@ -66,9 +67,9 @@
         <span class="k">return</span> <span class="n">wrapped</span>
     <span class="k">return</span> <span class="n">wrapper</span>
         
-        
-<span class="k">class</span> <span class="nc">RepScrWrap</span><span class="p">(</span><span class="nb">object</span><span class="p">):</span></div>
-<div class="viewcode-block" id="RepScrWrap"><a class="viewcode-back" href="../../../nhlscrapi.games.html#nhlscrapi.games.repscrwrap.RepScrWrap">[docs]</a>    <span class="sd">&quot;&quot;&quot;</span>
+        </div>
+<div class="viewcode-block" id="RepScrWrap"><a class="viewcode-back" href="../../../nhlscrapi.games.html#nhlscrapi.games.repscrwrap.RepScrWrap">[docs]</a><span class="k">class</span> <span class="nc">RepScrWrap</span><span class="p">(</span><span class="nb">object</span><span class="p">):</span>
+    <span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">    Lazy matchup reader base. Reports can be read in pieces. Only need to read matchup on read of first part. Serves</span>
 <span class="sd">    as the base class for all wrappers of report scrapers.</span>
 <span class="sd">    </span>
@@ -86,7 +87,7 @@
     
     
     <span class="nd">@property</span>
-    <span class="nd">@dispatch_loader</span><span class="p">(</span><span class="s">&#39;_rep_reader&#39;</span><span class="p">,</span> <span class="s">&#39;parse_matchup&#39;</span><span class="p">)</span>
+    <span class="nd">@dispatch_loader</span><span class="p">(</span><span class="s1">&#39;_rep_reader&#39;</span><span class="p">,</span> <span class="s1">&#39;parse_matchup&#39;</span><span class="p">)</span>
     <span class="k">def</span> <span class="nf">matchup</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
         <span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">        Return the game meta information displayed in report banners including team names,</span>
@@ -108,8 +109,8 @@
 <span class="sd">        &quot;&quot;&quot;</span>
         <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">_rep_reader</span><span class="o">.</span><span class="n">matchup</span>
         
-    <span class="k">def</span> <span class="nf">load_all</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
-<div class="viewcode-block" id="RepScrWrap.load_all"><a class="viewcode-back" href="../../../nhlscrapi.games.html#nhlscrapi.games.repscrwrap.RepScrWrap.load_all">[docs]</a>        <span class="sd">&quot;&quot;&quot;</span>
+<div class="viewcode-block" id="RepScrWrap.load_all"><a class="viewcode-back" href="../../../nhlscrapi.games.html#nhlscrapi.games.repscrwrap.RepScrWrap.load_all">[docs]</a>    <span class="k">def</span> <span class="nf">load_all</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">        Loads all parts of the report.</span>
 <span class="sd">        </span>
 <span class="sd">        :returns: ``self`` or ``None`` if load fails</span>
@@ -117,8 +118,8 @@
         <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">_rep_reader</span><span class="o">.</span><span class="n">parse</span><span class="p">():</span>
             <span class="k">return</span> <span class="bp">self</span>
         <span class="k">else</span><span class="p">:</span>
-            <span class="k">return</span> <span class="bp">None</span>
-</pre></div></div></div>
+            <span class="k">return</span> <span class="bp">None</span></div></div>
+</pre></div>
 
           </div>
         </div>
@@ -154,8 +155,8 @@
       &copy;2015, Author.
       
       |
-      Powered by <a href="http://sphinx-doc.org/">Sphinx 1.3.1</a>
-      &amp; <a href="https://github.com/bitprophet/alabaster">Alabaster 0.7.6</a>
+      Powered by <a href="http://sphinx-doc.org/">Sphinx 1.3.5</a>
+      &amp; <a href="https://github.com/bitprophet/alabaster">Alabaster 0.7.7</a>
       
     </div>
 
